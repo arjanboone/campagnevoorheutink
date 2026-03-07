@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Stel je vraag — Arjan Boone</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --gold: #c8973a;
+    --gold-light: #e8c878;
+    --red: #c0392b;
+    --green: #27ae60;
+    --muted: #8a8070;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(200,151,58,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,151,58,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(10,10,20,0.6) 100%);
+    pointer-events: none;
+  }
+  .scene {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 520px;
+    padding: 60px 32px;
+  }
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s ease forwards;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(32px, 7vw, 48px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--paper);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s ease forwards;
+  }
+  h1 em { color: var(--gold); font-style: italic; }
+  .intro {
+    font-size: 12px;
+    line-height: 1.9;
+    color: var(--muted);
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.3s ease forwards;
+  }
+  .form-block {
+    opacity: 0;
+    animation: fadeUp 0.6s 0.4s ease forwards;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .field label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .field input,
+  .field textarea {
+    background: rgba(245,240,232,0.05);
+    border: 1px solid rgba(200,151,58,0.15);
+    border-radius: 3px;
+    padding: 13px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--paper);
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+    resize: none;
+  }
+  .field input::placeholder,
+  .field textarea::placeholder { color: rgba(245,240,232,0.18); }
+  .field input:focus,
+  .field textarea:focus { border-color: rgba(200,151,58,0.5); }
+  .field textarea { min-height: 120px; line-height: 1.7; }
+  .field input.error,
+  .field textarea.error { border-color: var(--red); }
+
+  .verstuur-btn {
+    width: 100%;
+    background: var(--gold);
+    border: none;
+    border-radius: 3px;
+    padding: 15px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 8px;
+  }
+  .verstuur-btn:hover { background: var(--gold-light); }
+  .verstuur-btn:active { transform: scale(0.98); }
+
+  .error-msg {
+    font-size: 11px;
+    color: var(--red);
+    margin-top: 10px;
+    min-height: 16px;
+  }
+
+  /* BEVESTIGING */
+  .bevestiging {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+  }
+  .bevestiging.visible {
+    display: block;
+    animation: fadeUp 0.6s ease forwards;
+  }
+  .check-icon { margin-bottom: 28px; }
+  .bev-titel {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--paper);
+    margin-bottom: 12px;
+  }
+  .bev-sub {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.9;
+  }
+  .bev-sub em { color: var(--gold); font-style: italic; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .scene { padding: 48px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="scene">
+
+  <div id="formBlok">
+    <div class="eyebrow">Arjan Boone · Campagne Marketeer</div>
+
+    <h1>Welke vraag zou<br>jij <em>stellen?</em></h1>
+
+    <p class="intro">
+      Je hebt een kaartje gekregen.<br>
+      Nu is het jouw beurt.<br><br>
+      Stel de vraag die jij zou stellen<br>aan een campagne marketeer.
+    </p>
+
+    <div class="form-block">
+      <div class="field">
+        <label>Jouw naam</label>
+        <input type="text" id="naam" placeholder="Voornaam..." autocomplete="off">
+      </div>
+      <div class="field">
+        <label>Jouw vraag</label>
+        <textarea id="vraag" placeholder="Stel je vraag..."></textarea>
+      </div>
+      <button class="verstuur-btn" onclick="verstuur()">Verstuur →</button>
+      <div class="error-msg" id="errorMsg"></div>
+    </div>
+  </div>
+
+  <div class="bevestiging" id="bevestiging">
+    <div class="check-icon">
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <circle cx="28" cy="28" r="27" stroke="#c8973a" stroke-width="1.5"/>
+        <path d="M17 28l8 8 14-14" stroke="#c8973a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="bev-titel">Vraag ontvangen.</div>
+    <p class="bev-sub">
+      Arjan leest hem.<br>
+      <em>De omweg is de vaste route.</em>
+    </p>
+  </div>
+
+</div>
+
+<script>
+  function verstuur() {
+    const naam = document.getElementById('naam').value.trim();
+    const vraag = document.getElementById('vraag').value.trim();
+    const err = document.getElementById('errorMsg');
+
+    document.getElementById('naam').classList.remove('error');
+    document.getElementById('vraag').classList.remove('error');
+
+    if (!naam) {
+      document.getElementById('naam').classList.add('error');
+      err.textContent = 'Vul je naam in.';
+      return;
+    }
+    if (!vraag) {
+      document.getElementById('vraag').classList.add('error');
+      err.textContent = 'Stel je vraag.';
+      return;
+    }
+
+    err.textContent = '';
+
+    const onderwerp = encodeURIComponent(`Vraag van ${naam} — campagne marketeer`);
+    const body = encodeURIComponent(`Naam: ${naam}\n\nVraag:\n${vraag}\n\n— via vraag.html`);
+    window.location.href = `mailto:boone@arjanboone.nl?subject=${onderwerp}&body=${body}`;
+
+    setTimeout(() => {
+      document.getElementById('formBlok').style.display = 'none';
+      document.getElementById('bevestiging').classList.add('visible');
+    }, 800);
+  }
+</script>
+</body>
+</html>
