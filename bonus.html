@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bonus · Campagne Heutink</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0f1a;
+  --paper: #f5f0e8;
+  --gold: #c8973a;
+  --muted: #6b6355;
+  --line: rgba(200,151,58,0.18);
+  --card: rgba(245,240,232,0.04);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'DM Mono', monospace;
+  min-height: 100vh;
+  padding: 64px 32px 120px;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200,151,58,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,151,58,0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+.scene {
+  max-width: 580px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* EYEBROW */
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 48px;
+  opacity: 0;
+  animation: omhoog 0.5s 0.1s ease forwards;
+}
+
+/* TIMER BLOK */
+.timer-blok {
+  margin-bottom: 64px;
+  opacity: 0;
+  animation: omhoog 0.5s 0.2s ease forwards;
+}
+.timer-titel {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(26px, 5vw, 38px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.timer-titel em { color: var(--gold); font-style: italic; }
+.timer-sub {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 40px;
+}
+
+.countdown {
+  display: flex;
+  gap: 0;
+  margin-bottom: 8px;
+}
+.countdown-blok {
+  flex: 1;
+  text-align: center;
+  padding: 20px 8px;
+  border: 1px solid var(--line);
+  position: relative;
+}
+.countdown-blok:not(:last-child) {
+  border-right: none;
+}
+.countdown-blok:first-child { border-radius: 4px 0 0 4px; }
+.countdown-blok:last-child { border-radius: 0 4px 4px 0; }
+.countdown-getal {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(28px, 7vw, 44px);
+  font-weight: 700;
+  color: var(--paper);
+  line-height: 1;
+  display: block;
+  transition: opacity 0.2s;
+}
+.countdown-eenheid {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+/* PROGRESS BAR */
+.progress-balk {
+  height: 2px;
+  background: var(--line);
+  border-radius: 2px;
+  margin-bottom: 48px;
+  overflow: hidden;
+}
+.progress-vulling {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: width 1s linear;
+}
+
+/* OPEN STAAT — documenten */
+.documenten {
+  display: none;
+  margin-bottom: 64px;
+}
+.documenten.zichtbaar { display: block; animation: omhoog 0.5s ease forwards; }
+.doc-titel {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--gold);
+}
+.doc-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+.doc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.doc-kaart {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 20px 16px;
+  text-decoration: none;
+  color: var(--paper);
+  transition: border-color 0.2s, background 0.2s;
+  display: block;
+}
+.doc-kaart:hover {
+  border-color: rgba(200,151,58,0.5);
+  background: rgba(200,151,58,0.05);
+}
+.doc-kaart-nr {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.doc-kaart-naam {
+  font-family: 'Fraunces', serif;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* SCHEIDINGSLIJN */
+.scheidingslijn {
+  height: 1px;
+  background: var(--line);
+  margin-bottom: 48px;
+  opacity: 0;
+  animation: omhoog 0.5s 0.35s ease forwards;
+}
+
+/* BETAALOPTIES */
+.betaal-blok {
+  opacity: 0;
+  animation: omhoog 0.5s 0.4s ease forwards;
+}
+.betaal-kop {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.betaal-intro {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--paper);
+  margin-bottom: 32px;
+}
+.betaal-intro em { color: var(--gold); font-style: italic; }
+
+.opties {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.optie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  text-decoration: none;
+  color: var(--paper);
+  gap: 16px;
+}
+.optie:hover {
+  border-color: rgba(200,151,58,0.5);
+  background: rgba(200,151,58,0.05);
+}
+.optie.uitgelicht {
+  border-color: var(--gold);
+  background: rgba(200,151,58,0.06);
+}
+.optie-links { flex: 1; }
+.optie-label {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.optie-naam {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.optie-sub {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 3px;
+  line-height: 1.6;
+}
+.optie-prijs {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* GOUD SPECIALE OPTIE */
+.goud-toelichting {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.8;
+  padding: 12px 16px;
+  border-left: 2px solid var(--gold);
+  margin-bottom: 32px;
+  font-style: italic;
+}
+
+/* TERUG */
+.terug {
+  display: inline-block;
+  margin-top: 48px;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  opacity: 0;
+  animation: omhoog 0.5s 0.6s ease forwards;
+}
+.terug:hover { color: var(--paper); }
+
+@keyframes omhoog {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 500px) {
+  body { padding: 40px 20px 80px; }
+  .doc-grid { grid-template-columns: 1fr; }
+  .optie { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .optie-prijs { font-size: 18px; }
+}
+</style>
+</head>
+<body>
+<div class="scene">
+
+  <div class="eyebrow">Campagne Heutink · Arjan Boone · Bonus</div>
+
+  <!-- TIMER BLOK -->
+  <div class="timer-blok" id="timerBlok">
+    <div class="timer-titel">De omweg<br><em>heeft een looptijd.</em></div>
+    <div class="timer-sub">
+      Je hebt 010 gevonden. Goed. Dit zijn de bestanden die vrijkomen
+      als de tijd om is. Tweeënzeventig uur. Niet omdat het moet.
+      Omdat sommige dingen beter worden van wachten.
+    </div>
+
+    <div class="countdown" id="countdown">
+      <div class="countdown-blok">
+        <span class="countdown-getal" id="uren">--</span>
+        <span class="countdown-eenheid">Uur</span>
+      </div>
+      <div class="countdown-blok">
+        <span class="countdown-getal" id="minuten">--</span>
+        <span class="countdown-eenheid">Min</span>
+      </div>
+      <div class="countdown-blok">
+        <span class="countdown-getal" id="seconden">--</span>
+        <span class="countdown-eenheid">Sec</span>
+      </div>
+    </div>
+    <div class="progress-balk">
+      <div class="progress-vulling" id="progressVulling" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- DOCUMENTEN — zichtbaar na 72u -->
+  <div class="documenten" id="documenten">
+    <div class="doc-titel">De bestanden zijn beschikbaar.</div>
+    <div class="doc-sub">Tweeënzeventig uur. Je hebt gewacht. Of niet — ook dat zegt iets.</div>
+    <div class="doc-grid">
+      <a href="#" class="doc-kaart">
+        <div class="doc-kaart-nr">Document 01</div>
+        <div class="doc-kaart-naam">De omweg is de vaste route</div>
+      </a>
+      <a href="#" class="doc-kaart">
+        <div class="doc-kaart-nr">Document 02</div>
+        <div class="doc-kaart-naam">Campagne flowchart</div>
+      </a>
+      <a href="#" class="doc-kaart">
+        <div class="doc-kaart-nr">Document 03</div>
+        <div class="doc-kaart-naam">Braindump</div>
+      </a>
+      <a href="#" class="doc-kaart">
+        <div class="doc-kaart-nr">Document 04</div>
+        <div class="doc-kaart-naam">Conceptplannen uitgewerkt</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="scheidingslijn"></div>
+
+  <!-- BETAALOPTIES -->
+  <div class="betaal-blok">
+    <div class="betaal-kop">Iets meenemen</div>
+    <div class="betaal-intro">
+      Een campagne is vluchtig.<br>
+      <em>Sommige dingen niet.</em>
+    </div>
+
+    <div class="opties">
+
+      <!-- Optie 1: Roman -->
+      <a href="mailto:boone@arjanboone.nl?subject=Bestelling: De roman" class="optie">
+        <div class="optie-links">
+          <div class="optie-label">Document</div>
+          <div class="optie-naam">De omweg is de vaste route</div>
+          <div class="optie-sub">Roman · PDF + DOCX</div>
+        </div>
+        <div class="optie-prijs">€ 500</div>
+      </a>
+
+      <!-- Optie 2: Flowchart -->
+      <a href="mailto:boone@arjanboone.nl?subject=Bestelling: De flowchart" class="optie">
+        <div class="optie-links">
+          <div class="optie-label">Document</div>
+          <div class="optie-naam">Campagne flowchart</div>
+          <div class="optie-sub">Volledig overzicht · HTML + print</div>
+        </div>
+        <div class="optie-prijs">€ 500</div>
+      </a>
+
+      <!-- Optie 3: Beiden -->
+      <a href="mailto:boone@arjanboone.nl?subject=Bestelling: Roman + Flowchart" class="optie uitgelicht">
+        <div class="optie-links">
+          <div class="optie-label">Bundel · Aanbevolen</div>
+          <div class="optie-naam">Roman + Flowchart</div>
+          <div class="optie-sub">Allebei · één prijs</div>
+        </div>
+        <div class="optie-prijs">€ 777</div>
+      </a>
+
+      <!-- Optie 4: Goud -->
+      <a href="mailto:boone@arjanboone.nl?subject=Bestelling: 10 gram goud" class="optie">
+        <div class="optie-links">
+          <div class="optie-label">Blijvende waarde</div>
+          <div class="optie-naam">10 gram goud</div>
+          <div class="optie-sub">Roman + Flowchart · in goud</div>
+        </div>
+        <div class="optie-prijs">€ 1.467,40</div>
+      </a>
+
+    </div>
+
+    <div class="goud-toelichting">
+      De goudprijs is vastgezet op de laagste koers van 2 maart 2026 —
+      de dag van het eerste appje aan Floor Beek.
+      €146,74 per gram (24K). 10 gram. Dat is de prijs.
+      Hij beweegt niet meer.
+    </div>
+
+    <!-- Upsell link -->
+    <div class="optie" style="cursor:default; border-style: dashed; opacity: 0.7; margin-top: 8px;">
+      <div class="optie-links">
+        <div class="optie-label">Verder kijken</div>
+        <div class="optie-naam">Een blijvende herinnering</div>
+        <div class="optie-sub">Schilderij · Kunstwerk voor alle medewerkers</div>
+      </div>
+      <a href="upsell.html" style="color: var(--gold); font-size: 11px; text-decoration: none; white-space: nowrap; letter-spacing: 0.1em;">Bekijken →</a>
+    </div>
+
+  </div>
+
+  <a href="CampagnevoorHeutink.html" class="terug">← Terug naar de kluis</a>
+
+</div>
+
+<script>
+(function() {
+  const DUUR = 72 * 60 * 60 * 1000; // 72 uur in ms
+  const KEY = 'bonus_start_heutink';
+
+  let start = localStorage.getItem(KEY);
+  if (!start) {
+    start = Date.now();
+    localStorage.setItem(KEY, start);
+  } else {
+    start = parseInt(start);
+  }
+
+  const einde = start + DUUR;
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const nu = Date.now();
+    const resterend = einde - nu;
+
+    if (resterend <= 0) {
+      // Timer voorbij — toon documenten
+      document.getElementById('timerBlok').style.display = 'none';
+      document.getElementById('documenten').classList.add('zichtbaar');
+      return;
+    }
+
+    const totaalSec = Math.floor(resterend / 1000);
+    const uren = Math.floor(totaalSec / 3600);
+    const min = Math.floor((totaalSec % 3600) / 60);
+    const sec = totaalSec % 60;
+
+    document.getElementById('uren').textContent = pad(uren);
+    document.getElementById('minuten').textContent = pad(min);
+    document.getElementById('seconden').textContent = pad(sec);
+
+    // Progress: hoeveel is al verstreken
+    const verlopen = nu - start;
+    const pct = Math.min(100, (verlopen / DUUR) * 100);
+    document.getElementById('progressVulling').style.width = pct + '%';
+
+    setTimeout(tick, 1000);
+  }
+
+  tick();
+})();
+</script>
+</body>
+</html>

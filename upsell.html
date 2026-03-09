@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Een blijvende herinnering · Campagne Heutink</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0f1a;
+  --paper: #f5f0e8;
+  --gold: #c8973a;
+  --muted: #6b6355;
+  --line: rgba(200,151,58,0.18);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'DM Mono', monospace;
+  min-height: 100vh;
+  padding: 64px 32px 120px;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200,151,58,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,151,58,0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+.scene {
+  max-width: 580px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* ANIMATIES */
+@keyframes omhoog {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade { opacity: 0; animation: omhoog 0.5s ease forwards; }
+.fade-1 { animation-delay: 0.1s; }
+.fade-2 { animation-delay: 0.2s; }
+.fade-3 { animation-delay: 0.3s; }
+.fade-4 { animation-delay: 0.4s; }
+.fade-5 { animation-delay: 0.5s; }
+
+/* EYEBROW */
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 48px;
+}
+
+/* JOSHUA BELL */
+.bell-blok {
+  border-left: 2px solid var(--gold);
+  padding: 20px 24px;
+  margin-bottom: 56px;
+  background: rgba(200,151,58,0.04);
+  border-radius: 0 4px 4px 0;
+}
+.bell-citaat {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(18px, 4vw, 24px);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--paper);
+  margin-bottom: 12px;
+}
+.bell-bron {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  line-height: 1.8;
+}
+
+/* SECTIE */
+.sectie {
+  margin-bottom: 56px;
+}
+.sectie-nr {
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.sectie-titel {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(22px, 5vw, 32px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.sectie-titel em { color: var(--gold); font-style: italic; }
+.sectie-sub {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.9;
+  margin-bottom: 28px;
+}
+
+/* SCHILDERIJ KAART */
+.schilderij-kaart {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 28px 24px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.schilderij-kaart::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+.schilderij-prijs {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(32px, 7vw, 48px);
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.schilderij-naam {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+.bestel-knop {
+  display: inline-block;
+  padding: 12px 24px;
+  border: 1px solid var(--gold);
+  border-radius: 3px;
+  color: var(--gold);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+.bestel-knop:hover {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+/* SCHEIDINGSLIJN */
+.lijn {
+  height: 1px;
+  background: var(--line);
+  margin: 56px 0;
+}
+
+/* DRIE VRAGEN */
+.vragen-blok { }
+.vraag-stap {
+  display: none;
+}
+.vraag-stap.actief {
+  display: block;
+  animation: omhoog 0.4s ease forwards;
+}
+.vraag-tekst {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(17px, 4vw, 22px);
+  font-weight: 300;
+  line-height: 1.6;
+  margin-bottom: 28px;
+  color: var(--paper);
+}
+.vraag-knoppen {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.ja-knop, .nee-knop {
+  flex: 1;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: none;
+  color: var(--paper);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+.ja-knop:hover {
+  border-color: var(--gold);
+  background: rgba(200,151,58,0.08);
+  color: var(--gold);
+}
+.nee-knop:hover {
+  border-color: rgba(245,240,232,0.3);
+  background: rgba(245,240,232,0.04);
+}
+
+/* REACTIE TEKSTEN */
+.reactie {
+  display: none;
+  padding: 20px 0;
+  animation: omhoog 0.4s ease forwards;
+}
+.reactie.zichtbaar { display: block; }
+
+.reactie-ja {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.9;
+  border-left: 2px solid var(--gold);
+  padding-left: 20px;
+  margin-bottom: 24px;
+}
+.reactie-nee {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.9;
+  font-style: italic;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.offerte-knop {
+  display: inline-block;
+  padding: 14px 28px;
+  background: var(--gold);
+  color: var(--ink);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 3px;
+  transition: opacity 0.2s;
+  margin-top: 8px;
+}
+.offerte-knop:hover { opacity: 0.85; }
+
+/* VOORTGANGSINDICATOR */
+.voortgang {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 32px;
+}
+.voortgang-stip {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--line);
+  border: 1px solid rgba(200,151,58,0.3);
+  transition: background 0.3s;
+}
+.voortgang-stip.actief { background: var(--gold); }
+.voortgang-stip.klaar { background: rgba(200,151,58,0.4); }
+
+/* TERUG */
+.terug {
+  display: inline-block;
+  margin-top: 56px;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.terug:hover { color: var(--paper); }
+
+@media (max-width: 500px) {
+  body { padding: 40px 20px 80px; }
+}
+</style>
+</head>
+<body>
+<div class="scene">
+
+  <div class="eyebrow fade fade-1">Campagne Heutink · Arjan Boone · Een blijvende herinnering</div>
+
+  <!-- JOSHUA BELL -->
+  <div class="bell-blok fade fade-2">
+    <div class="bell-citaat">
+      "1.097 mensen liepen voorbij.<br>Jij niet."
+    </div>
+    <div class="bell-bron">
+      Joshua Bell speelde incognito in het metrostation van Washington D.C.<br>
+      45 minuten lang. Stradivarius, €3,5 miljoen. 7 mensen bleven staan.<br>
+      Drie dagen eerder: uitverkocht concert, €100 per stoel.<br>
+      <br>
+      2007. Het verhaal is niet veranderd.
+    </div>
+  </div>
+
+  <!-- SECTIE 1: SCHILDERIJ -->
+  <div class="sectie fade fade-3">
+    <div class="sectie-nr">Optie 01</div>
+    <div class="sectie-titel">Een werk<br><em>voor aan de muur.</em></div>
+    <div class="sectie-sub">
+      Geïnspireerd op het metrostation. Een figuur, een viool, licht,
+      voorbijgangers. Geen portret, geen naam. Wel het verhaal.
+      Op het kaartje erbij: de rest.
+      <br><br>
+      Gemaakt door Arjan Boone. Origineel werk.
+      Schilderij of ets — naar keuze in overleg.
+    </div>
+
+    <div class="schilderij-kaart">
+      <div class="schilderij-prijs">€ 10.777</div>
+      <div class="schilderij-naam">
+        Origineel werk · Schilderij of ets<br>
+        Inclusief kaartje met Joshua Bell-verhaal<br>
+        Aflevering in overleg
+      </div>
+      <a href="mailto:boone@arjanboone.nl?subject=Interesse: Schilderij / ets &body=Dag Arjan, ik heb interesse in het originele werk. Graag meer informatie." class="bestel-knop">Interesse melden →</a>
+    </div>
+  </div>
+
+  <div class="lijn fade fade-3"></div>
+
+  <!-- SECTIE 2: KUNSTWERK IN DELEN -->
+  <div class="sectie fade fade-4">
+    <div class="sectie-nr">Optie 02</div>
+    <div class="sectie-titel">Een groot werk<br><em>in kleine stukjes.</em></div>
+    <div class="sectie-sub">
+      Één groot kunstwerk. Geprint in stukjes van 5×5 cm.
+      Ingelijst. Verzonden aan alle medewerkers van Heutink —
+      via de eigen logistieke afdeling.
+      <br><br>
+      Elk stukje is een fragment van het geheel.
+      Samen vormen ze het verhaal van deze campagne.
+      Als ankerpunt. Als herinnering. Als bewijs dat
+      creativiteit iets teweeg kan brengen.
+    </div>
+
+    <!-- DRIE VRAGEN -->
+    <div class="vragen-blok">
+
+      <div class="voortgang" id="voortgang">
+        <div class="voortgang-stip actief" id="stip-1"></div>
+        <div class="voortgang-stip" id="stip-2"></div>
+        <div class="voortgang-stip" id="stip-3"></div>
+      </div>
+
+      <!-- Vraag 1 -->
+      <div class="vraag-stap actief" id="vraag-1">
+        <div class="vraag-tekst">
+          Wat is het je waard als alle medewerkers van Heutink horen
+          wat een creatieve campagne teweeg kan brengen?
+        </div>
+        <div class="vraag-knoppen">
+          <button class="ja-knop" onclick="antwoord(1, true)">Ja</button>
+          <button class="nee-knop" onclick="antwoord(1, false)">Nee</button>
+        </div>
+        <div class="reactie" id="nee-1">
+          <div class="reactie-nee">
+            Misschien later. Het aanbod staat open.
+          </div>
+        </div>
+      </div>
+
+      <!-- Vraag 2 -->
+      <div class="vraag-stap" id="vraag-2">
+        <div class="vraag-tekst">
+          Wil je ze een blijvend aandenken geven in de vorm van
+          een klein stukje van een groot kunstwerk?
+        </div>
+        <div class="vraag-knoppen">
+          <button class="ja-knop" onclick="antwoord(2, true)">Ja</button>
+          <button class="nee-knop" onclick="antwoord(2, false)">Nee</button>
+        </div>
+        <div class="reactie" id="nee-2">
+          <div class="reactie-nee">
+            Een gedeeld verhaal is een ankerpunt voor de organisatie
+            en een katalysator voor versnelling en groei.
+            De deur blijft open.
+          </div>
+        </div>
+      </div>
+
+      <!-- Vraag 3 — Offerte -->
+      <div class="vraag-stap" id="vraag-3">
+        <div class="vraag-tekst">
+          Goed. Dan brengt de campagnemarketeer een offerte uit.
+        </div>
+        <div class="reactie-ja">
+          Het kunstwerk wordt gemaakt door Arjan Boone.
+          Geprint op formaat, opgeknipt in stukjes van 5×5 cm,
+          ingelijst, verzonden via Heutink's eigen logistieke afdeling.
+          <br><br>
+          De offerte volgt na een kort gesprek over het aantal
+          medewerkers en het gewenste formaat van het totaalwerk.
+        </div>
+        <a href="mailto:boone@arjanboone.nl?subject=Offerte aanvraag: Kunstwerk in delen&body=Dag Arjan, we willen graag een offerte ontvangen voor het kunstwerk in delen voor alle medewerkers van Heutink." class="offerte-knop">Offerte aanvragen →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <a href="bonus.html" class="terug fade fade-5">← Terug naar bonus</a>
+
+</div>
+
+<script>
+let stap = 1;
+
+function antwoord(vraag, ja) {
+  if (ja) {
+    // Verberg huidige vraag, toon volgende
+    document.getElementById('vraag-' + vraag).classList.remove('actief');
+
+    if (vraag < 3) {
+      const volgende = vraag + 1;
+      document.getElementById('vraag-' + volgende).classList.add('actief');
+
+      // Update voortgang stippen
+      document.getElementById('stip-' + vraag).classList.remove('actief');
+      document.getElementById('stip-' + vraag).classList.add('klaar');
+      document.getElementById('stip-' + volgende).classList.add('actief');
+    }
+  } else {
+    // Toon nee-reactie, verberg knoppen
+    const neeEl = document.getElementById('nee-' + vraag);
+    if (neeEl) {
+      neeEl.classList.add('zichtbaar');
+    }
+    // Verberg knoppen in deze stap
+    const knoppen = document.getElementById('vraag-' + vraag).querySelector('.vraag-knoppen');
+    if (knoppen) knoppen.style.display = 'none';
+  }
+}
+</script>
+
+</body>
+</html>
