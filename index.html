@@ -82,29 +82,44 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
     <p class="fase-intro">Het overmaken van geld voor een sollicitatie is een van de gekste dingen die ik ooit heb gedaan. Maar bij dezen.</p>
     <div class="ideal-quote">Niet voor mezelf — voor de Heutink Foundation.<br>Als test :-)</div>
     <div class="options-grid">
-      <button class="option-btn" onclick="donateer('001')">
+      <button class="option-btn" onclick="donateer('0,01')">
         <span class="amount">€ 0,01</span>
         Symbolisch.<br>Het gebaar telt.
       </button>
-      <button class="option-btn" onclick="donateer('777')">
+      <button class="option-btn" onclick="donateer('7,77')">
         <span class="amount">€ 7,77</span>
         Een handtekening.<br>Herken je hem?
       </button>
-      <button class="option-btn" onclick="donateer('10')">
+      <button class="option-btn" onclick="donateer('10,–')">
         <span class="amount">€ 10,–</span>
         Serieus.<br>Goed gevoel.
       </button>
-      <button class="option-btn" onclick="donateer('100')">
+      <button class="option-btn" onclick="donateer('100,–')">
         <span class="amount">€ 100,–</span>
         Statement.<br>Ik geloof erin.
       </button>
-      <button class="option-btn genius" onclick="donateerZelf()">
+      <button class="option-btn genius" onclick="donateer('zelf')">
         <span class="amount" style="font-size:15px;color:var(--gold-light)">Zelf bedrag invullen</span>
-        Maak zelf over op NL13ABNA0442657692<br>t.n.v. Heutink Foundation
+        Maak over wat je wilt.
       </button>
       <button class="option-btn skip" onclick="slaOver()">Sla donatie over →</button>
     </div>
     <div class="foundation-note">Donaties gaan naar de Heutink Foundation</div>
+
+    <!-- IBAN popup -->
+    <div id="ibanPopup" style="display:none;position:fixed;inset:0;background:rgba(10,10,20,0.85);z-index:100;align-items:center;justify-content:center;">
+      <div style="background:#1a1a2e;border:1px solid rgba(200,151,58,0.3);border-radius:6px;padding:36px;max-width:400px;width:90%;text-align:center;">
+        <div style="font-size:10px;letter-spacing:0.25em;color:#c8973a;text-transform:uppercase;margin-bottom:16px;">Donatie · Heutink Foundation</div>
+        <div style="font-family:'Fraunces',serif;font-size:36px;font-weight:700;color:#c8973a;margin-bottom:20px;" id="ibanBedrag"></div>
+        <div style="font-size:11px;color:#8a8070;margin-bottom:12px;">Maak over naar:</div>
+        <div style="background:rgba(200,151,58,0.08);border:1px solid rgba(200,151,58,0.2);border-radius:4px;padding:16px;margin-bottom:8px;">
+          <div style="font-size:15px;color:#f5f0e8;letter-spacing:0.08em;margin-bottom:6px;">NL13 ABNA 0442 6576 92</div>
+          <div style="font-size:11px;color:#8a8070;">t.n.v. Heutink Foundation</div>
+        </div>
+        <div style="font-size:10px;color:#8a8070;margin-bottom:28px;">Omschrijving: Campagne donatie</div>
+        <button onclick="sluitIban()" style="background:#c8973a;border:none;border-radius:3px;padding:12px 28px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#1a1a2e;cursor:pointer;">Ik ga overmaken →</button>
+      </div>
+    </div>
   </div>
 
   <!-- FASE 3: App opdracht -->
@@ -120,7 +135,7 @@ body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse
       App hem. Vertel hem dat je de code hebt gevonden. Dan geeft hij jou wat je nodig hebt om door te gaan.
     </p>
     <div class="number-block">
-      <div class="tel">JOUW NUMMER HIER</div>
+      <div class="tel">06 44 43 47 35</div>
       <div class="tel-sub">Arjan Boone · WhatsApp of SMS</div>
     </div>
     <a href="puzzel.html" class="continue-btn">Ik heb geappt — verder naar de puzzel →</a>
@@ -144,19 +159,14 @@ function checkCode(){
     setTimeout(()=>inp.classList.remove('error'),500);
   }
 }
-function donateer(b){
-  // TODO: vervang door Tikkie-links per bedrag
-  const links = {
-    '001': 'https://tikkie.me/VERVANG_001',
-    '10':  'https://tikkie.me/VERVANG_10',
-    '100': 'https://tikkie.me/VERVANG_100'
-  };
-  if(links[b] && !links[b].includes('VERVANG')) {
-    window.open(links[b], '_blank');
-  }
-  setTimeout(() => wissel('fase2','fase3'), 800);
+function donateer(bedrag){
+  const popup = document.getElementById('ibanPopup');
+  const label = document.getElementById('ibanBedrag');
+  label.textContent = bedrag === 'zelf' ? 'Zelf te bepalen' : '€ ' + bedrag;
+  popup.style.display = 'flex';
 }
-function donateerZelf(){
+function sluitIban(){
+  document.getElementById('ibanPopup').style.display = 'none';
   wissel('fase2','fase3');
 }
 function slaOver(){ wissel('fase2','fase3'); }
