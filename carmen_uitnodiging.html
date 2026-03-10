@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Van Carmen · Heutink</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sun: #E8A020;
+    --sun-light: #FFF8E8;
+    --ink: #1A1A1A;
+    --paper: #FDFAF3;
+    --muted: #888;
+    --border: rgba(232,160,32,0.2);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  .kaart {
+    max-width: 520px;
+    width: 100%;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 40px rgba(0,0,0,0.07);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: opkomen 0.6s 0.1s ease forwards;
+  }
+  @keyframes opkomen { to { opacity: 1; transform: translateY(0); } }
+  .top-balk {
+    background: var(--sun);
+    padding: 28px 36px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .zon { font-size: 28px; line-height: 1; }
+  .top-tekst {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+  }
+  .top-tekst strong {
+    display: block;
+    font-size: 15px;
+    letter-spacing: 0.05em;
+    color: white;
+    margin-bottom: 2px;
+  }
+  .body { padding: 40px 36px 36px; }
+  .kaartje-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--sun);
+    font-weight: 500;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .hoofdtekst {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .subtekst {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+  .vraag-blok {
+    background: var(--sun-light);
+    border-left: 3px solid var(--sun);
+    border-radius: 0 4px 4px 0;
+    padding: 18px 20px;
+    margin-bottom: 28px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink);
+    font-style: italic;
+    font-family: 'Playfair Display', serif;
+  }
+  .antwoord-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 10px;
+    display: block;
+  }
+  textarea {
+    width: 100%;
+    background: #FAFAFA;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    resize: vertical;
+    min-height: 100px;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+  textarea::placeholder { color: #CCC; }
+  textarea:focus { border-color: rgba(232,160,32,0.5); }
+  .verstuur {
+    width: 100%;
+    margin-top: 14px;
+    background: var(--sun);
+    border: none;
+    border-radius: 4px;
+    padding: 15px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .verstuur:hover { background: #D4901C; }
+  .verstuur:disabled { background: #CCC; cursor: default; }
+  .fout { font-size: 12px; color: #C0392B; margin-top: 8px; min-height: 16px; }
+  .bevestiging { display: none; padding: 48px 36px; text-align: center; }
+  .bevestiging.zichtbaar { display: block; animation: opkomen 0.5s ease forwards; }
+  .bev-zon { font-size: 48px; margin-bottom: 20px; }
+  .bev-titel {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .bev-sub { font-size: 14px; color: var(--muted); line-height: 1.8; }
+  .bev-sub em { color: var(--sun); font-style: normal; font-weight: 500; }
+  @media (max-width: 480px) {
+    .body, .bevestiging { padding: 32px 24px; }
+    .top-balk { padding: 22px 24px; }
+    .hoofdtekst { font-size: 19px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="kaart">
+  <div class="top-balk">
+    <div class="zon">☀️</div>
+    <div class="top-tekst">
+      <strong>Je hebt een mailtje gekregen van Carmen Kroeze.</strong>
+    </div>
+  </div>
+
+  <div class="body" id="formulier-blok">
+    <span class="kaartje-label">Een vraag voor jou</span>
+    <p class="hoofdtekst">Carmen heeft je de link gestuurd. Tof dat je hier bent.</p>
+    <p class="subtekst">Ze dacht dat jij hier iets mee kon. En ze heeft waarschijnlijk gelijk.</p>
+
+    <div class="vraag-blok">
+      Met welk thema zou jij de nieuwe campagne marketeer aan het werk willen zetten?
+    </div>
+
+    <span class="antwoord-label">Jouw antwoord</span>
+    <textarea id="antwoord" placeholder="Typ hier je antwoord..."></textarea>
+    <div class="fout" id="fout"></div>
+    <button class="verstuur" id="verstuur-btn" onclick="verstuur()">Verstuur antwoord</button>
+  </div>
+
+  <div class="bevestiging" id="bevestiging">
+    <div class="bev-zon">☀️</div>
+    <div class="bev-titel">Je antwoord is binnen!</div>
+    <div class="bev-sub">
+      Bedankt voor jouw input.<br><br>
+      <em>De campagne marketeer</em>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function verstuur() {
+    const antwoord = document.getElementById('antwoord').value.trim();
+    const fout = document.getElementById('fout');
+    const btn = document.getElementById('verstuur-btn');
+
+    if (!antwoord) {
+      fout.textContent = 'Vul eerst een antwoord in.';
+      return;
+    }
+
+    fout.textContent = '';
+    btn.disabled = true;
+    btn.textContent = 'Wordt verstuurd...';
+
+    // Formspree: maak gratis account op formspree.io
+    // Maak een form aan gericht op boone@arjanboone.nl
+    // Vervang YOUR_FORM_ID hieronder door jouw form ID
+    const FORMSPREE_URL = 'https://formspree.io/f/YOUR_FORM_ID';
+
+    try {
+      const resp = await fetch(FORMSPREE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          onderwerp: 'Campagnethema — via Carmen',
+          antwoord: antwoord
+        })
+      });
+
+      if (resp.ok) {
+        document.getElementById('formulier-blok').style.display = 'none';
+        document.getElementById('bevestiging').classList.add('zichtbaar');
+      } else {
+        fout.textContent = 'Er ging iets mis. Probeer het opnieuw.';
+        btn.disabled = false;
+        btn.textContent = 'Verstuur antwoord';
+      }
+    } catch(e) {
+      fout.textContent = 'Geen verbinding. Probeer het opnieuw.';
+      btn.disabled = false;
+      btn.textContent = 'Verstuur antwoord';
+    }
+  }
+</script>
+
+</body>
+</html>
