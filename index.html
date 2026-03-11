@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Heutink — ?</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1a2e;--paper:#f5f0e8;--gold:#c8973a;--gold-light:#e8c878;--red:#c0392b;--green:#27ae60;--muted:#8a8070;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--ink);color:var(--paper);font-family:'DM Mono',monospace;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(200,151,58,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(200,151,58,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(10,10,20,0.6) 100%);pointer-events:none;}
+.scene{position:relative;z-index:1;width:100%;max-width:560px;padding:60px 32px;}
+#fase2,#fase3{display:none;}
+.eyebrow{font-size:10px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:48px;opacity:0;animation:fadeUp .6s .2s ease forwards;}
+.riddle-block{opacity:0;animation:fadeUp .6s .4s ease forwards;}
+.riddle-label{font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:20px;}
+.riddle-text{font-family:'Fraunces',serif;font-size:clamp(20px,5vw,28px);font-weight:300;font-style:italic;line-height:1.6;color:var(--paper);margin-bottom:12px;}
+.riddle-sub{font-size:12px;color:var(--muted);line-height:1.8;margin-bottom:40px;}
+.riddle-sub em{color:var(--gold);font-style:normal;}
+.input-group{opacity:0;animation:fadeUp .6s .7s ease forwards;}
+.code-input{width:100%;background:rgba(245,240,232,.05);border:1px solid rgba(200,151,58,.15);border-radius:3px;padding:14px 18px;font-family:'DM Mono',monospace;font-size:16px;color:var(--paper);outline:none;transition:border-color .2s;letter-spacing:.08em;margin-bottom:12px;}
+.code-input::placeholder{color:rgba(245,240,232,.18);}
+.code-input:focus{border-color:rgba(200,151,58,.6);}
+.code-input.error{border-color:var(--red);animation:shake .4s ease;}
+.submit-btn{width:100%;background:var(--gold);border:none;border-radius:3px;padding:14px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);cursor:pointer;transition:background .2s,transform .1s;}
+.submit-btn:hover{background:var(--gold-light);}
+.submit-btn:active{transform:scale(.98);}
+.error-msg{font-size:11px;color:var(--red);margin-top:10px;min-height:16px;letter-spacing:.04em;}
+.fase-title{font-family:'Fraunces',serif;font-size:clamp(28px,7vw,42px);font-weight:700;line-height:1.1;color:var(--paper);margin-bottom:16px;}
+.fase-title em{color:var(--gold);font-style:italic;}
+.fase-intro{font-size:12px;line-height:1.9;color:var(--muted);margin-bottom:32px;}
+.ideal-quote{font-family:'Fraunces',serif;font-size:15px;font-style:italic;line-height:1.7;color:var(--paper);border-left:3px solid var(--red);padding-left:20px;margin-bottom:36px;}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.option-btn{background:rgba(245,240,232,.04);border:1px solid rgba(200,151,58,.15);border-radius:3px;padding:18px 14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--paper);cursor:pointer;transition:all .2s;text-align:center;line-height:1.6;letter-spacing:.03em;}
+.option-btn:hover{border-color:var(--gold);background:rgba(200,151,58,.08);color:var(--gold);}
+.option-btn .amount{display:block;font-size:20px;font-family:'Fraunces',serif;font-weight:700;color:var(--gold);margin-bottom:6px;}
+.option-btn.genius{grid-column:1/-1;border-color:rgba(200,151,58,.35);}
+.option-btn.skip{grid-column:1/-1;padding:13px;font-size:11px;color:var(--muted);border-style:dashed;}
+.option-btn.skip:hover{border-color:var(--muted);color:var(--paper);background:transparent;}
+.foundation-note{font-size:10px;color:var(--muted);text-align:center;margin-top:6px;letter-spacing:.05em;}
+.check-icon{width:56px;height:56px;margin-bottom:32px;}
+.app-instruction{font-family:'Fraunces',serif;font-size:clamp(24px,6vw,36px);font-weight:700;line-height:1.2;color:var(--paper);margin-bottom:20px;}
+.app-instruction em{color:var(--gold);font-style:italic;}
+.app-sub{font-size:12px;line-height:1.9;color:var(--muted);margin-bottom:36px;}
+.number-block{background:rgba(200,151,58,.08);border:1px solid rgba(200,151,58,.3);border-radius:3px;padding:20px 24px;margin-bottom:36px;text-align:center;}
+.number-block .tel{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:var(--gold);letter-spacing:.04em;}
+.number-block .tel-sub{font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:.1em;text-transform:uppercase;}
+.continue-btn{display:block;width:100%;background:transparent;border:1px solid var(--gold);border-radius:3px;padding:16px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);cursor:pointer;transition:all .3s;text-align:center;text-decoration:none;}
+.continue-btn:hover{background:var(--gold);color:var(--ink);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@keyframes popIn{0%{transform:scale(.85);opacity:0}60%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+.pop{animation:popIn .5s ease forwards;}
+.eyebrow2{font-size:10px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin-bottom:36px;}
+@media(max-width:480px){.scene{padding:48px 20px;}.options-grid{grid-template-columns:1fr;}.option-btn.genius,.option-btn.skip{grid-column:1;}}
+</style>
+</head>
+<body>
+<div class="scene">
+
+  <!-- FASE 1: Raadsel -->
+  <div id="fase1">
+    <div class="eyebrow">Heutink · Toegang beperkt</div>
+    <div class="riddle-block">
+      <div class="riddle-label">Zoek het product</div>
+      <p class="riddle-text">Zoek in het Heutink-assortiment naar de naam van een berg in het <em>Zillertal</em>, in het dorp <em>Mayrhofen</em>.</p>
+      <p class="riddle-sub">Dit product voor kleuters is niet meer leverbaar — maar de code bestaat nog wel.<br>46 cm hoog.</p>
+    </div>
+    <div class="input-group">
+      <input class="code-input" id="codeInput" type="text" placeholder="Voer de productcode in..." autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+      <button class="submit-btn" onclick="checkCode()">Ontsluit</button>
+      <div class="error-msg" id="errorMsg"></div>
+    </div>
+  </div>
+
+  <!-- FASE 2: iDEAL -->
+  <div id="fase2">
+    <div class="eyebrow2">Code gekraakt · Stap 2 van 3</div>
+    <h2 class="fase-title">Een campagne<br>maken kost <em>geld.</em></h2>
+    <p class="fase-intro">Het overmaken van geld voor een sollicitatie is een van de gekste dingen die ik ooit heb gedaan. Maar bij dezen.</p>
+    <div class="ideal-quote">Niet voor mezelf — voor de Heutink Foundation.<br>Als test :-)</div>
+    <div class="options-grid">
+      <button class="option-btn" onclick="donateer('0,01')">
+        <span class="amount">€ 0,01</span>
+        Symbolisch.<br>Het gebaar telt.
+      </button>
+      <button class="option-btn" onclick="donateer('7,77')">
+        <span class="amount">€ 7,77</span>
+        Een handtekening.<br>Herken je hem?
+      </button>
+      <button class="option-btn" onclick="donateer('10,–')">
+        <span class="amount">€ 10,–</span>
+        Serieus.<br>Goed gevoel.
+      </button>
+      <button class="option-btn" onclick="donateer('100,–')">
+        <span class="amount">€ 100,–</span>
+        Statement.<br>Ik geloof erin.
+      </button>
+      <button class="option-btn genius" onclick="donateer('zelf')">
+        <span class="amount" style="font-size:15px;color:var(--gold-light)">Zelf bedrag invullen</span>
+        Maak over wat je wilt.
+      </button>
+      <button class="option-btn skip" onclick="slaOver()">Sla donatie over →</button>
+    </div>
+    <div class="foundation-note">Donaties gaan naar de Heutink Foundation</div>
+    <div class="foundation-note" style="margin-top:10px;line-height:1.8;max-width:400px;margin-left:auto;margin-right:auto;">Als je een bedrag kiest en betaalt, stort ik het op rekening van de Foundation. Het gaat om het gebaar en de intentie — niet om de route of de omweg.</div>
+
+    <!-- IBAN popup -->
+    <div id="ibanPopup" style="display:none;position:fixed;inset:0;background:rgba(10,10,20,0.85);z-index:100;align-items:center;justify-content:center;">
+      <div style="background:#1a1a2e;border:1px solid rgba(200,151,58,0.3);border-radius:6px;padding:36px;max-width:400px;width:90%;text-align:center;">
+        <div style="font-size:10px;letter-spacing:0.25em;color:#c8973a;text-transform:uppercase;margin-bottom:16px;">Donatie · Heutink Foundation</div>
+        <div style="font-family:'Fraunces',serif;font-size:36px;font-weight:700;color:#c8973a;margin-bottom:20px;" id="ibanBedrag"></div>
+        <div style="font-size:11px;color:#8a8070;margin-bottom:12px;">Maak over naar:</div>
+        <div style="background:rgba(200,151,58,0.08);border:1px solid rgba(200,151,58,0.2);border-radius:4px;padding:16px;margin-bottom:8px;">
+          <div style="font-size:15px;color:#f5f0e8;letter-spacing:0.08em;margin-bottom:6px;">NL13 ABNA 0442 6576 92</div>
+          <div style="font-size:11px;color:#8a8070;">t.n.v. Heutink Foundation</div>
+        </div>
+        <div style="font-size:10px;color:#8a8070;margin-bottom:28px;">Omschrijving: Campagne donatie</div>
+        <button onclick="sluitIban()" style="background:#c8973a;border:none;border-radius:3px;padding:12px 28px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#1a1a2e;cursor:pointer;">Ik ga overmaken →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 3: App opdracht -->
+  <div id="fase3">
+    <svg class="check-icon" viewBox="0 0 56 56" fill="none">
+      <circle cx="28" cy="28" r="27" stroke="#c8973a" stroke-width="1.5"/>
+      <path d="M17 28l8 8 14-14" stroke="#c8973a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h2 class="app-instruction">Eerste code<br>gekraakt.<br><em>Bijna.</em></h2>
+    <p class="app-sub">
+      Voordat je verder kunt, is er één stap.<br><br>
+      De re-integratiecoach die geïnteresseerd is in de functie van campagne marketeer wil graag van je horen.<br><br>
+      App hem. Vertel hem dat je de code hebt gevonden. Dan geeft hij jou wat je nodig hebt om door te gaan.
+    </p>
+    <div class="number-block">
+      <div class="tel">06 44 43 47 35</div>
+      <div class="tel-sub">Arjan Boone · WhatsApp of SMS</div>
+    </div>
+    <a href="puzzel.html" class="continue-btn">Ik heb geappt — verder naar de puzzel →</a>
+  </div>
+
+</div>
+<script>
+const JUISTE = 'RU91537750.001';
+function checkCode(){
+  const inp=document.getElementById('codeInput');
+  const err=document.getElementById('errorMsg');
+  const val=inp.value.trim().toUpperCase().replace(/\s/g,'');
+  if(!val)return;
+  const norm=s=>s.replace(/[\.\-]/g,'');
+  if(val===JUISTE||norm(val)===norm(JUISTE)){
+    err.textContent='';
+    wissel('fase1','fase2');
+  } else {
+    inp.classList.add('error');
+    err.textContent='Onjuiste code. Het product bestaat niet meer — maar de code wel.';
+    setTimeout(()=>inp.classList.remove('error'),500);
+  }
+}
+function donateer(bedrag){
+  const links = {
+    '0,01': 'https://www.ing.nl/payreq/m/?trxid=Nr565XFtr1zsywQ3JrMI6UsqA90I6HZo',
+    '7,77': 'https://www.ing.nl/payreq/m/?trxid=7ZXQjC5ARfa0IUo1zVDmib8lRKMO05dh',
+    '10,–': 'https://www.ing.nl/payreq/m/?trxid=JwyyaKyScwLKJeH9yPLJYtHs4lDCbWeG',
+  };
+  if(bedrag === 'zelf'){
+    const popup = document.getElementById('ibanPopup');
+    const label = document.getElementById('ibanBedrag');
+    label.textContent = 'Zelf te bepalen';
+    popup.style.display = 'flex';
+  } else if(links[bedrag]){
+    window.open(links[bedrag], '_blank');
+    setTimeout(() => wissel('fase2','fase3'), 1000);
+  }
+}
+function sluitIban(){
+  document.getElementById('ibanPopup').style.display = 'none';
+  wissel('fase2','fase3');
+}
+function slaOver(){ wissel('fase2','fase3'); }
+function wissel(van,naar){
+  const v=document.getElementById(van);
+  const n=document.getElementById(naar);
+  v.style.transition='opacity .4s ease';
+  v.style.opacity='0';
+  setTimeout(()=>{v.style.display='none';n.style.display='block';n.classList.add('pop');},400);
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('fase1').style.display!=='none') checkCode();
+});
+</script>
+</body>
+</html>
