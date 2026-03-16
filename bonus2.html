@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bonus · Stap 2 · Campagne Heutink</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0f1a;
+  --paper: #f5f0e8;
+  --gold: #c8973a;
+  --gold-light: #e8c878;
+  --red: #c0392b;
+  --muted: #6b6355;
+  --line: rgba(200,151,58,0.18);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'DM Mono', monospace;
+  min-height: 100vh;
+  padding: 64px 32px 120px;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200,151,58,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,151,58,0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+.scene { max-width: 580px; margin: 0 auto; position: relative; z-index: 1; }
+@keyframes omhoog { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.eyebrow { font-size: 10px; letter-spacing: 0.32em; color: var(--gold); text-transform: uppercase; margin-bottom: 48px; opacity: 0; animation: omhoog 0.5s 0.1s ease forwards; }
+.intro-titel { font-family: 'Fraunces', serif; font-size: clamp(26px, 5vw, 38px); font-weight: 700; line-height: 1.1; margin-bottom: 12px; opacity: 0; animation: omhoog 0.5s 0.2s ease forwards; }
+.intro-titel em { color: var(--gold); font-style: italic; }
+.intro-sub { font-size: 11px; color: var(--muted); line-height: 1.8; margin-bottom: 48px; opacity: 0; animation: omhoog 0.5s 0.3s ease forwards; }
+
+.opties { display: flex; flex-direction: column; gap: 12px; opacity: 0; animation: omhoog 0.5s 0.4s ease forwards; }
+
+.optie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 20px 24px;
+  text-decoration: none;
+  color: var(--paper);
+  gap: 20px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.optie:hover { border-color: rgba(200,151,58,0.5); background: rgba(200,151,58,0.05); }
+.optie.uitgelicht { border-color: var(--gold); background: rgba(200,151,58,0.06); }
+.optie.gesprek { border-color: rgba(200,151,58,0.4); background: rgba(200,151,58,0.08); }
+.optie.overslaan { border-style: dashed; opacity: 0.7; }
+.optie.overslaan:hover { opacity: 1; }
+
+.optie-links { flex: 1; }
+.optie-label { font-size: 9px; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; }
+.optie-naam { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 700; line-height: 1.2; margin-bottom: 4px; }
+.optie-sub { font-size: 10px; color: var(--muted); line-height: 1.6; }
+.optie-prijs { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--gold); white-space: nowrap; flex-shrink: 0; }
+
+.goud-noot {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.8;
+  padding: 16px 20px;
+  border-left: 2px solid var(--gold);
+  margin-top: 4px;
+  font-style: italic;
+  opacity: 0;
+  animation: omhoog 0.5s 0.5s ease forwards;
+}
+
+.scheidingslijn { height: 1px; background: var(--line); margin: 48px 0; opacity: 0; animation: omhoog 0.5s 0.5s ease forwards; }
+
+.verder-blok { opacity: 0; animation: omhoog 0.5s 0.6s ease forwards; }
+.verder-kop { font-size: 10px; letter-spacing: 0.28em; color: var(--muted); text-transform: uppercase; margin-bottom: 16px; }
+.verder-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  transition: border-color 0.2s, color 0.2s;
+}
+.verder-link:hover { border-color: rgba(200,151,58,0.4); color: var(--paper); }
+
+.terug { display: inline-block; margin-top: 48px; font-size: 10px; letter-spacing: 0.2em; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: color 0.2s; opacity: 0; animation: omhoog 0.5s 0.7s ease forwards; }
+.terug:hover { color: var(--paper); }
+@media (max-width: 500px) { body { padding: 40px 20px 80px; } .optie { flex-direction: column; align-items: flex-start; } }
+</style>
+</head>
+<body>
+<div class="scene">
+
+  <div class="eyebrow">Campagne Heutink · Arjan Boone · Stap 2</div>
+
+  <div class="intro-titel">Een campagne<br>is vluchtig.<br><em>Sommige dingen niet.</em></div>
+  <div class="intro-sub">
+    Je hebt de kluis geopend, de video bekeken en de timer laten lopen.<br>
+    Hier is wat er nog ligt.
+  </div>
+
+  <div class="opties">
+
+    <!-- Optie 1: Boek -->
+    <a href="mailto:boone@arjanboone.nl?subject=Bestelling: Het boek&body=Dag Arjan, ik wil graag het boek bestellen." class="optie">
+      <div class="optie-links">
+        <div class="optie-label">Document</div>
+        <div class="optie-naam">Er komt een sollicitant bij Heutink</div>
+        <div class="optie-sub">Het boek · PDF + DOCX</div>
+      </div>
+      <div class="optie-prijs">€ 500</div>
+    </a>
+
+    <!-- Optie 2: Flowchart -->
+    <a href="mailto:boone@arjanboone.nl?subject=Bestelling: De flowchart&body=Dag Arjan, ik wil graag de campagne flowchart bestellen." class="optie">
+      <div class="optie-links">
+        <div class="optie-label">Document</div>
+        <div class="optie-naam">De Campagne Flowchart</div>
+        <div class="optie-sub">Volledig overzicht · HTML + print</div>
+      </div>
+      <div class="optie-prijs">€ 500</div>
+    </a>
+
+    <!-- Optie 3: Bundel -->
+    <a href="mailto:boone@arjanboone.nl?subject=Bestelling: Boek + Flowchart&body=Dag Arjan, ik wil graag het boek én de flowchart bestellen." class="optie uitgelicht">
+      <div class="optie-links">
+        <div class="optie-label">Bundel · Aanbevolen</div>
+        <div class="optie-naam">Het boek + De Flowchart</div>
+        <div class="optie-sub">Allebei · één prijs</div>
+      </div>
+      <div class="optie-prijs">€ 777</div>
+    </a>
+
+    <!-- Optie 4: Goud -->
+    <a href="mailto:boone@arjanboone.nl?subject=Bestelling: Goud&body=Dag Arjan, ik wil graag het boek + flowchart bestellen, betaald in goud." class="optie">
+      <div class="optie-links">
+        <div class="optie-label">Blijvende waarde</div>
+        <div class="optie-naam">Het boek + De Flowchart — betaald in goud</div>
+        <div class="optie-sub">Vastgezet op de koers van 2 maart 2026</div>
+      </div>
+      <div class="optie-prijs">€ 1.467,40</div>
+    </a>
+
+    <!-- Optie 5: Pre-order 250 exemplaren -->
+    <a href="mailto:boone@arjanboone.nl?subject=Pre-order: 250 exemplaren&body=Dag Arjan, we willen het boek pre-orderen voor alle medewerkers — 250 exemplaren." class="optie">
+      <div class="optie-links">
+        <div class="optie-label">Voor de hele organisatie</div>
+        <div class="optie-naam">Pre-order het boek · 250 exemplaren</div>
+        <div class="optie-sub">Eén voor elke medewerker van Heutink</div>
+      </div>
+      <div class="optie-prijs">Op aanvraag</div>
+    </a>
+
+    <!-- Optie 6: Direct gesprek -->
+    <a href="mailto:boone@arjanboone.nl?subject=We willen NU met je in gesprek&body=Dag Arjan, laat al die extra's maar zitten — we willen nu met je in gesprek!" class="optie gesprek">
+      <div class="optie-links">
+        <div class="optie-label">Direct</div>
+        <div class="optie-naam">Laat al die extra's maar zitten — we willen NÚ met je in gesprek!</div>
+        <div class="optie-sub">boone@arjanboone.nl · 06 44 43 47 35</div>
+      </div>
+      <div class="optie-prijs" style="font-size:28px;">→</div>
+    </a>
+
+    <!-- Optie 7: Geen interesse -->
+    <a href="upsell.html" class="optie overslaan">
+      <div class="optie-links">
+        <div class="optie-label">Verder kijken</div>
+        <div class="optie-naam">Een blijvende herinnering</div>
+        <div class="optie-sub">Schilderij · Kunstwerk voor alle medewerkers</div>
+      </div>
+      <div style="color: var(--gold); font-size: 11px; white-space: nowrap;">Bekijken →</div>
+    </a>
+
+  </div>
+
+  <div class="goud-noot">
+    De goudprijs is vastgezet op de laagste koers van 2 maart 2026 —
+    de dag van het eerste appje aan Floor Beek.
+    €146,74 per gram (24K). 10 gram. Dat is de prijs.
+    Hij beweegt niet meer.
+  </div>
+
+  <div class="scheidingslijn"></div>
+
+  <a href="bonus.html" class="terug">← Terug</a>
+
+</div>
+</body>
+</html>
