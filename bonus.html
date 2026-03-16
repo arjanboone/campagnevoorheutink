@@ -143,7 +143,7 @@ body::before {
       document.getElementById('vrijgegeven').classList.add('zichtbaar');
       if (!mailVerstuurd) {
         mailVerstuurd = true;
-        fetch('https://formspree.io/f/YOUR_FORM_ID', {
+        fetch('https://formspree.io/f/xjgaadyd', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ onderwerp: 'Bonus timer afgelopen', bericht: 'Floor kan door naar bonus2.html' })
@@ -167,7 +167,7 @@ async function stuurMagazine() {
   const feedback = document.getElementById('magazineFeedback');
   if (!email) { feedback.textContent = 'Vul je e-mailadres in.'; return; }
   try {
-    const resp = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+    const resp = await fetch('https://formspree.io/f/xjgaadyd', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({ onderwerp: 'Magazine aanvraag via bonus', email })
