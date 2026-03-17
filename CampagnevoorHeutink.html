@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Arjan Boone — Campagne Marketeer</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --gold: #c8973a;
+    --gold-light: #e8c878;
+    --red: #c0392b;
+    --green: #27ae60;
+    --muted: #8a8070;
+    --line: rgba(200,151,58,0.15);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(200,151,58,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,151,58,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 80px 32px 160px;
+  }
+
+  /* SECTIONS */
+  .section { margin-bottom: 96px; }
+
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s ease forwards;
+  }
+
+  /* OPENER */
+  .opener-line {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(36px, 8vw, 60px);
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--paper);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s ease forwards;
+  }
+  .opener-line em { color: var(--gold); font-style: italic; }
+
+  .opener-sub {
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--muted);
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.3s ease forwards;
+  }
+
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    margin-bottom: 64px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.4s ease forwards;
+  }
+
+  /* VIDEO */
+  .video-block {
+    opacity: 0;
+    animation: fadeUp 0.7s 0.5s ease forwards;
+  }
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .video-placeholder {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: rgba(245,240,232,0.04);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+  .video-placeholder svg { opacity: 0.4; }
+  .video-embed {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 4px;
+    border: none;
+    display: none;
+  }
+
+  /* CV SAMENVATTING */
+  .cv-block {
+    opacity: 0;
+    animation: fadeUp 0.7s 0.6s ease forwards;
+  }
+  .cv-naam {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--paper);
+    margin-bottom: 4px;
+  }
+  .cv-titel {
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    margin-bottom: 32px;
+  }
+  .cv-profiel {
+    font-size: 13px;
+    line-height: 1.85;
+    color: rgba(245,240,232,0.75);
+    margin-bottom: 40px;
+    padding-left: 20px;
+    border-left: 2px solid var(--line);
+  }
+
+  .cv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .cv-item {}
+  .cv-item-jaar {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .cv-item-naam {
+    font-size: 13px;
+    font-family: 'Fraunces', serif;
+    color: var(--paper);
+    margin-bottom: 4px;
+  }
+  .cv-item-rol {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .cv-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 12px 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .cv-download:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .cv-download svg { flex-shrink: 0; }
+
+  /* PLANNEN */
+  .plannen-block {
+    opacity: 0;
+    animation: fadeUp 0.7s 0.7s ease forwards;
+  }
+  .plannen-intro {
+    font-size: 12px;
+    line-height: 1.9;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  .plan-card {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+  }
+  .plan-card:hover { border-color: rgba(200,151,58,0.4); }
+  .plan-card.selected {
+    border-color: var(--gold);
+    background: rgba(200,151,58,0.04);
+  }
+
+  .plan-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+  }
+  .plan-nr {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .plan-card.selected .plan-nr {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--ink);
+    font-weight: bold;
+  }
+  .plan-info { flex: 1; }
+  .plan-titel {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    color: var(--paper);
+    margin-bottom: 4px;
+  }
+  .plan-sub {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .plan-check {
+    width: 20px;
+    height: 20px;
+    color: var(--gold);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .plan-card.selected .plan-check { opacity: 1; }
+
+  /* MAIL FORMULIER */
+  .mail-form {
+    opacity: 0;
+    animation: fadeUp 0.7s 0.8s ease forwards;
+  }
+  .mail-intro {
+    font-size: 12px;
+    line-height: 1.9;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  .mail-inputs { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+  .mail-row { display: flex; gap: 12px; }
+  .mail-field { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .mail-field label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .mail-input {
+    background: rgba(245,240,232,0.05);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 12px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--paper);
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .mail-input::placeholder { color: rgba(245,240,232,0.18); }
+  .mail-input:focus { border-color: rgba(200,151,58,0.5); }
+  .mail-input.error { border-color: var(--red); }
+
+  .verstuur-btn {
+    width: 100%;
+    background: var(--gold);
+    border: none;
+    border-radius: 3px;
+    padding: 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .verstuur-btn:hover { background: var(--gold-light); }
+  .verstuur-btn:active { transform: scale(0.98); }
+
+  .form-feedback {
+    font-size: 11px;
+    color: var(--red);
+    margin-top: 10px;
+    min-height: 16px;
+  }
+
+  /* BEVESTIGING */
+  .bevestiging {
+    display: none;
+    text-align: center;
+    padding: 48px 0;
+  }
+  .bevestiging.visible { display: block; animation: fadeUp 0.6s ease forwards; }
+  .bevestiging-icon { margin-bottom: 24px; }
+  .bevestiging-titel {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--paper);
+    margin-bottom: 12px;
+  }
+  .bevestiging-sub {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.9;
+  }
+  .bevestiging-sub em { color: var(--gold); font-style: italic; }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 120px;
+    padding-top: 40px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+  .footer-zin {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .footer-name {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .page { padding: 56px 20px 120px; }
+    .cv-grid { grid-template-columns: 1fr; }
+    .mail-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- OPENER -->
+  <div class="eyebrow">Heutink · De kluis is open</div>
+
+  <h1 class="opener-line">
+    Ha <em>Floor!</em>
+  </h1>
+
+  <p class="opener-sub">
+    Als re-integratiecoach rijd ik het hele land door, van kandidaat naar kandidaat.<br>
+    Maar jij hebt intussen de kluis geopend.<br><br>
+    Tijd om de auto even stil te zetten langs de kant om deze videoboodschap voor je op te nemen!
+  </p>
+
+  <div class="divider"></div>
+
+  <!-- VIDEO -->
+  <div class="section video-block">
+    <div class="section-label">De pitch</div>
+
+    <iframe class="video-embed"
+      src="https://www.youtube.com/embed/lVgKBnb8i2Q?rel=0&modestbranding=1"
+      allowfullscreen style="display:block">
+    </iframe>
+  </div>
+
+  <!-- VERDER -->
+  <div class="section" style="opacity:0;animation:fadeUp 0.7s 0.7s ease forwards;text-align:center;">
+    <a href="bonus.html" class="cv-download" style="display:inline-flex;border-color:var(--gold);color:var(--gold);background:none;cursor:pointer;font-size:12px;padding:16px 28px;text-decoration:none;">
+      Meer paaseieren →
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+</div>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  let geselecteerdPlan = null;
+
+  function selectPlan(nr) {
+    geselecteerdPlan = nr;
+    [1,2,3].forEach(n => {
+      document.getElementById('plan' + n).classList.toggle('selected', n === nr);
+    });
+    document.getElementById('formFeedback').textContent = '';
+  }
+
+  function verstuur() {
+    const feedback = document.getElementById('formFeedback');
+    const naam1 = document.getElementById('naam1').value.trim();
+    const mail1 = document.getElementById('mail1').value.trim();
+
+    if (!geselecteerdPlan) {
+      feedback.textContent = 'Kies eerst een plan.';
+      return;
+    }
+    if (!naam1 || !mail1) {
+      feedback.textContent = 'Vul minstens één naam en e-mailadres in.';
+      document.getElementById('mail1').classList.add('error');
+      return;
+    }
+    if (!mail1.includes('@')) {
+      feedback.textContent = 'Controleer het e-mailadres.';
+      document.getElementById('mail1').classList.add('error');
+      return;
+    }
+
+    document.getElementById('mail1').classList.remove('error');
+
+    const planNamen = ['', 'De schoolbrief', 'Future from Scratch', 'Beide plannen'];
+    const ontvangers = [];
+    [[naam1, mail1],
+     [document.getElementById('naam2').value.trim(), document.getElementById('mail2').value.trim()],
+     [document.getElementById('naam3').value.trim(), document.getElementById('mail3').value.trim()]
+    ].forEach(([n, m]) => { if (n && m) ontvangers.push(`${n} <${m}>`); });
+
+    // Mail naar Arjan
+    const onderwerp = encodeURIComponent(`Kluiscampagne — keuze: ${planNamen[geselecteerdPlan]}`);
+    const body = encodeURIComponent(
+      `Gekozen plan: ${planNamen[geselecteerdPlan]}\n\nOntvangers:\n${ontvangers.join('\n')}\n\nVerstuurd via CampagnevoorHeutink.html`
+    );
+    const mailtoLink = `mailto:boone@arjanboone.nl?subject=${onderwe
