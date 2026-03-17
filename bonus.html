@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bonus · Campagne Heutink</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0f1a;
+  --paper: #f5f0e8;
+  --gold: #c8973a;
+  --gold-light: #e8c878;
+  --muted: #6b6355;
+  --line: rgba(200,151,58,0.18);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'DM Mono', monospace;
+  min-height: 100vh;
+  padding: 64px 32px 120px;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200,151,58,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,151,58,0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+.scene { max-width: 580px; margin: 0 auto; position: relative; z-index: 1; }
+@keyframes omhoog { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.eyebrow { font-size: 10px; letter-spacing: 0.32em; color: var(--gold); text-transform: uppercase; margin-bottom: 48px; opacity: 0; animation: omhoog 0.5s 0.1s ease forwards; }
+.timer-blok { margin-bottom: 48px; opacity: 0; animation: omhoog 0.5s 0.2s ease forwards; }
+.timer-titel { font-family: 'Fraunces', serif; font-size: clamp(26px, 5vw, 38px); font-weight: 700; line-height: 1.1; margin-bottom: 12px; }
+.timer-titel em { color: var(--gold); font-style: italic; }
+.timer-sub { font-size: 11px; color: var(--muted); line-height: 1.8; margin-bottom: 32px; }
+.countdown { display: flex; gap: 0; margin-bottom: 8px; }
+.countdown-blok { flex: 1; text-align: center; padding: 20px 8px; border: 1px solid var(--line); }
+.countdown-blok:not(:last-child) { border-right: none; }
+.countdown-blok:first-child { border-radius: 4px 0 0 4px; }
+.countdown-blok:last-child { border-radius: 0 4px 4px 0; }
+.countdown-getal { font-family: 'Fraunces', serif; font-size: clamp(28px, 7vw, 44px); font-weight: 700; color: var(--paper); line-height: 1; display: block; }
+.countdown-eenheid { display: block; font-size: 9px; letter-spacing: 0.22em; color: var(--muted); text-transform: uppercase; margin-top: 8px; }
+.progress-balk { height: 2px; background: var(--line); border-radius: 2px; margin-bottom: 36px; overflow: hidden; }
+.progress-vulling { height: 100%; background: var(--gold); border-radius: 2px; transition: width 1s linear; }
+.magazine-blok { margin-top: 32px; padding: 24px; border: 1px solid var(--line); border-radius: 4px; background: rgba(200,151,58,0.04); }
+.magazine-kop { font-size: 10px; letter-spacing: 0.25em; color: var(--gold); text-transform: uppercase; margin-bottom: 12px; }
+.magazine-sub { font-size: 11px; color: var(--muted); line-height: 1.8; margin-bottom: 20px; }
+.magazine-rij { display: flex; gap: 10px; }
+.magazine-input { flex: 1; background: rgba(245,240,232,.05); border: 1px solid rgba(200,151,58,.2); border-radius: 3px; padding: 12px 16px; font-family: 'DM Mono', monospace; font-size: 13px; color: var(--paper); outline: none; transition: border-color 0.2s; }
+.magazine-input::placeholder { color: rgba(245,240,232,.2); }
+.magazine-input:focus { border-color: rgba(200,151,58,.5); }
+.magazine-btn { background: var(--gold); border: none; border-radius: 3px; padding: 12px 20px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink); cursor: pointer; white-space: nowrap; transition: background 0.2s; }
+.magazine-btn:hover { background: var(--gold-light); }
+.magazine-feedback { font-size: 11px; color: var(--gold); margin-top: 10px; min-height: 16px; }
+.vrijgegeven { display: none; margin-bottom: 48px; }
+.vrijgegeven.zichtbaar { display: block; animation: omhoog 0.5s ease forwards; }
+.vrij-titel { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--gold); }
+.vrij-sub { font-size: 11px; color: var(--muted); margin-bottom: 28px; line-height: 1.8; }
+.verder-btn { display: inline-block; padding: 16px 32px; background: var(--gold); color: var(--ink); font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; border-radius: 3px; transition: background 0.2s; }
+.verder-btn:hover { background: var(--gold-light); }
+.scheidingslijn { height: 1px; background: var(--line); margin-bottom: 48px; opacity: 0; animation: omhoog 0.5s 0.35s ease forwards; }
+.terug { display: inline-block; margin-top: 48px; font-size: 10px; letter-spacing: 0.2em; color: var(--muted); text-decoration: none; text-transform: uppercase; transition: color 0.2s; opacity: 0; animation: omhoog 0.5s 0.5s ease forwards; }
+.terug:hover { color: var(--paper); }
+@media (max-width: 500px) { body { padding: 40px 20px 80px; } .magazine-rij { flex-direction: column; } }
+</style>
+</head>
+<body>
+<div class="scene">
+
+  <div class="eyebrow">Campagne Heutink · Arjan Boone · Bonus</div>
+
+  <div class="timer-blok" id="timerBlok">
+    <div class="timer-titel">De omweg<br><em>heeft een looptijd.</em></div>
+    <div class="timer-sub">
+      Je hebt de kluis geopend. Goed. De volgende stap komt vrij
+      als de tijd om is. Vierentwintig uur. Niet omdat het moet.
+      Omdat sommige dingen beter worden van wachten.
+    </div>
+
+    <div class="countdown">
+      <div class="countdown-blok">
+        <span class="countdown-getal" id="uren">--</span>
+        <span class="countdown-eenheid">Uur</span>
+      </div>
+      <div class="countdown-blok">
+        <span class="countdown-getal" id="minuten">--</span>
+        <span class="countdown-eenheid">Min</span>
+      </div>
+      <div class="countdown-blok">
+        <span class="countdown-getal" id="seconden">--</span>
+        <span class="countdown-eenheid">Sec</span>
+      </div>
+    </div>
+    <div class="progress-balk">
+      <div class="progress-vulling" id="progressVulling" style="width:0%"></div>
+    </div>
+
+    <div class="magazine-blok">
+      <div class="magazine-kop">Je hoeft niet te wachten</div>
+      <div class="magazine-sub">
+        Er ligt leesvoer klaar.<br>
+        Mail je e-mailadres naar Arjan en ontvang zijn sollicitatiemagazine.
+      </div>
+      <div class="magazine-rij">
+        <input class="magazine-input" id="magazineEmail" type="email" placeholder="jouw@mail.nl">
+        <button class="magazine-btn" onclick="stuurMagazine()">Stuur →</button>
+      </div>
+      <div class="magazine-feedback" id="magazineFeedback"></div>
+    </div>
+  </div>
+
+  <div class="vrijgegeven" id="vrijgegeven">
+    <div class="vrij-titel">De volgende stap is vrijgegeven.</div>
+    <div class="vrij-sub">Vierentwintig uur. Je hebt gewacht. Of niet — ook dat zegt iets.</div>
+    <a href="bonus2.html" class="verder-btn">Verder →</a>
+  </div>
+
+  <div class="scheidingslijn"></div>
+  <a href="CampagnevoorHeutink.html" class="terug">← Terug naar de video</a>
+
+</div>
+<script>
+(function() {
+  const DUUR = 24 * 60 * 60 * 1000;
+  const KEY = 'bonus_start_heutink';
+  let start = localStorage.getItem(KEY);
+  if (!start) { start = Date.now(); localStorage.setItem(KEY, start); }
+  else { start = parseInt(start); }
+  const einde = start + DUUR;
+  let mailVerstuurd = false;
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function tick() {
+    const nu = Date.now();
+    const resterend = einde - nu;
+    if (resterend <= 0) {
+      document.getElementById('timerBlok').style.display = 'none';
+      document.getElementById('vrijgegeven').classList.add('zichtbaar');
+      if (!mailVerstuurd) {
+        mailVerstuurd = true;
+        fetch('https://formspree.io/f/xjgaadyd', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ onderwerp: 'Bonus timer afgelopen', bericht: 'Floor kan door naar bonus2.html' })
+        }).catch(() => {});
+      }
+      return;
+    }
+    const totaalSec = Math.floor(resterend / 1000);
+    document.getElementById('uren').textContent = pad(Math.floor(totaalSec / 3600));
+    document.getElementById('minuten').textContent = pad(Math.floor((totaalSec % 3600) / 60));
+    document.getElementById('seconden').textContent = pad(totaalSec % 60);
+    const pct = Math.min(100, ((nu - start) / DUUR) * 100);
+    document.getElementById('progressVulling').style.width = pct + '%';
+    setTimeout(tick, 1000);
+  }
+  tick();
+})();
+
+async function stuurMagazine() {
+  const email = document.getElementById('magazineEmail').value.trim();
+  const feedback = document.getElementById('magazineFeedback');
+  if (!email) { feedback.textContent = 'Vul je e-mailadres in.'; return; }
+  try {
+    const resp = await fetch('https://formspree.io/f/xjgaadyd', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ onderwerp: 'Magazine aanvraag via bonus', email })
+    });
+    if (resp.ok) {
+      feedback.textContent = 'Ontvangen. Het magazine volgt.';
+      document.getElementById('magazineEmail').disabled = true;
+    } else {
+      feedback.textContent = 'Er ging iets mis. Probeer opnieuw.';
+    }
+  } catch(e) {
+    feedback.textContent = 'Geen verbinding. Probeer opnieuw.';
+  }
+}
+</script>
+</body>
+</html>
