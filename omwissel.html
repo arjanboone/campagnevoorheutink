@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Heutink — De laatste stap</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --paper: #f5f0e8;
+    --gold: #c8973a;
+    --gold-light: #e8c878;
+    --red: #c0392b;
+    --green: #27ae60;
+    --muted: #8a8070;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(200,151,58,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,151,58,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 60px 32px 120px;
+  }
+
+  /* INTRO */
+  .eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s ease forwards;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(32px, 7vw, 50px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--paper);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s ease forwards;
+  }
+  h1 em { color: var(--gold); font-style: italic; }
+  .intro {
+    font-size: 12px;
+    line-height: 1.9;
+    color: var(--muted);
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.3s ease forwards;
+  }
+
+  /* FRAGMENTS DISPLAY */
+  .fragments-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.4s ease forwards;
+  }
+
+  /* DRAG ZONE */
+  .drag-zone {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    min-height: 80px;
+    margin-bottom: 40px;
+    padding: 20px;
+    background: rgba(245,240,232,0.03);
+    border: 1px dashed rgba(200,151,58,0.2);
+    border-radius: 4px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.5s ease forwards;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .drag-zone.drag-over {
+    border-color: rgba(200,151,58,0.6);
+    background: rgba(200,151,58,0.05);
+  }
+  .drag-zone-label {
+    font-size: 11px;
+    color: rgba(245,240,232,0.2);
+    align-self: center;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  /* FRAGMENT TILES */
+  .fragment-tile {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--paper);
+    background: rgba(200,151,58,0.12);
+    border: 1px solid rgba(200,151,58,0.35);
+    border-radius: 3px;
+    padding: 12px 18px;
+    cursor: grab;
+    user-select: none;
+    transition: background 0.15s, transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+    touch-action: none;
+  }
+  .fragment-tile:hover {
+    background: rgba(200,151,58,0.2);
+    border-color: rgba(200,151,58,0.6);
+  }
+  .fragment-tile.dragging {
+    opacity: 0.4;
+    cursor: grabbing;
+  }
+  .fragment-tile.ghost {
+    background: rgba(200,151,58,0.25);
+    border-color: var(--gold);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    opacity: 1;
+    cursor: grabbing;
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
+    transform: rotate(2deg) scale(1.05);
+  }
+
+  /* DROP TARGET */
+  .drop-slot {
+    flex: 1;
+    min-width: 120px;
+    min-height: 60px;
+    border: 1px dashed rgba(200,151,58,0.2);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: rgba(245,240,232,0.15);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  .drop-slot.drag-over-slot {
+    border-color: var(--gold);
+    background: rgba(200,151,58,0.08);
+  }
+  .drop-slot.filled { border-style: solid; border-color: rgba(200,151,58,0.3); }
+
+  /* ANSWER ZONE */
+  .answer-section {
+    opacity: 0;
+    animation: fadeUp 0.6s 0.6s ease forwards;
+  }
+  .answer-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .answer-zone {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    min-height: 80px;
+    padding: 20px;
+    background: rgba(245,240,232,0.02);
+    border: 1px solid rgba(200,151,58,0.15);
+    border-radius: 4px;
+    margin-bottom: 24px;
+    transition: border-color 0.3s ease;
+    position: relative;
+  }
+  .answer-zone.correct {
+    border-color: var(--green);
+    background: rgba(39,174,96,0.05);
+  }
+  .answer-zone.wrong {
+    border-color: var(--red);
+    animation: shake 0.4s ease;
+  }
+  .answer-placeholder {
+    font-size: 11px;
+    color: rgba(245,240,232,0.15);
+    align-self: center;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+    letter-spacing: 0.1em;
+  }
+
+  /* BUTTONS */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+  }
+  .check-btn {
+    flex: 1;
+    background: var(--gold);
+    border: none;
+    border-radius: 3px;
+    padding: 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .check-btn:hover { background: var(--gold-light); }
+  .check-btn:active { transform: scale(0.98); }
+  .reset-btn {
+    background: transparent;
+    border: 1px solid rgba(245,240,232,0.15);
+    border-radius: 3px;
+    padding: 14px 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover { border-color: var(--muted); color: var(--paper); }
+  .feedback-msg {
+    font-size: 11px;
+    color: var(--red);
+    margin-top: 12px;
+    min-height: 16px;
+    letter-spacing: 0.04em;
+  }
+
+  /* REVEAL */
+  .reveal {
+    display: none;
+    margin-top: 64px;
+    text-align: center;
+  }
+  .reveal.visible { display: block; animation: fadeUp 0.8s ease forwards; }
+  .reveal-divider {
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    margin: 0 auto 32px;
+  }
+  .reveal-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+  .reveal-zin {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(28px, 7vw, 50px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--paper);
+    margin-bottom: 12px;
+  }
+  .reveal-zin span { color: var(--gold); }
+  .reveal-sub {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 40px;
+  }
+  .kluis-btn {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    border-radius: 3px;
+    padding: 16px 40px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  .kluis-btn:hover { background: var(--gold); color: var(--ink); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+  @keyframes popCorrect {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+  }
+  .pop-correct { animation: popCorrect 0.4s ease; }
+
+  @media (max-width: 480px) {
+    .page { padding: 40px 20px 80px; }
+    .fragment-tile { font-size: 17px; padding: 12px 16px; }
+    .btn-row { flex-direction: column; }
+  }
+
+  .salaris-opt {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: rgba(245,240,232,0.03);
+    border: 1px solid rgba(200,151,58,0.15);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+  .salaris-opt:hover {
+    border-color: rgba(200,151,58,0.5);
+    background: rgba(200,151,58,0.06);
+  }
+  .salaris-opt.gekozen {
+    border-color: var(--gold);
+    background: rgba(200,151,58,0.08);
+  }
+  .salaris-nr {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(200,151,58,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--gold);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .salaris-opt.gekozen .salaris-nr {
+    background: var(--gold);
+    color: var(--ink);
+    font-weight: bold;
+    border-color: var(--gold);
+  }
+  .salaris-tekst {
+    font-size: 13px;
+    color: var(--paper);
+    line-height: 1.5;
+    font-family: 'DM Mono', monospace;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="eyebrow">Heutink · Laatste stap · Vier fragmenten</div>
+
+  <h1>Leg de zin<br>op zijn <em>plek.</em></h1>
+
+  <p class="intro">
+    Je hebt vier fragmenten verzameld.<br>
+    Ze betekenen niets apart.<br>
+    Samen zeggen ze alles.<br>
+    Sleep ze in de juiste volgorde.
+  </p>
+
+  <!-- LOSSE FRAGMENTEN (startpunt) -->
+  <div class="fragments-label">Jouw vier fragmenten</div>
+  <div class="drag-zone" id="bronZone">
+    <!-- worden gevuld door JS, in willekeurige volgorde -->
+  </div>
+
+  <!-- DOELZONE -->
+  <div class="answer-section">
+    <div class="answer-label">De juiste volgorde</div>
+    <div class="answer-zone" id="doelZone">
+      <div class="answer-placeholder" id="doelPlaceholder">Sleep de fragmenten hiernaartoe →</div>
+    </div>
+    <div class="btn-row">
+      <button class="check-btn" id="checkBtn" onclick="checkVolgorde()">Controleer →</button>
+      <button class="reset-btn" onclick="reset()">Opnieuw</button>
+    </div>
+    <div class="feedback-msg" id="feedbackMsg"></div>
+  </div>
+
+  <!-- REVEAL -->
+  <div class="reveal" id="reveal">
+    <div class="reveal-divider"></div>
+    <div class="reveal-label">De zin is compleet</div>
+    <div class="reveal-zin">
+      De omweg<br>
+      is de vaste<br>
+      route —<br>
+      <span>van Arjan.</span>
+    </div>
+    <p class="reveal-sub">
+      Vier mensen. Vier vragen. Één zin.<br>
+      Maar voordat de kluis opengaat — één vraag.
+    </p>
+  </div>
+
+  <!-- DRIE VRAGEN -->
+  <div class="reveal" id="vragenblok" style="margin-top:0">
+
+    <!-- VRAAG 1 -->
+    <div id="vraag1blok">
+      <div style="width:40px;height:1px;background:var(--gold);margin:0 auto 32px"></div>
+      <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">Vraag 1 van 3</div>
+      <div style="font-family:'Fraunces',serif;font-size:clamp(20px,5vw,30px);font-weight:700;line-height:1.2;color:var(--paper);margin-bottom:28px">
+        Wat mag een goede<br>campagnemarketeer kosten?
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+        <div class="salaris-opt" data-vraag="1" data-keuze="A — € 60.000/jaar · fulltime · € 5.000/maand" onclick="kiesOptie(this,1)">
+          <span class="salaris-nr">A</span><span class="salaris-tekst">€ 60.000 per jaar · fulltime · € 5.000 per maand</span>
+        </div>
+        <div class="salaris-opt" data-vraag="1" data-keuze="B — € 60.000/jaar · 1,5 dag/week · ~€ 770/dag" onclick="kiesOptie(this,1)">
+          <span class="salaris-nr">B</span><span class="salaris-tekst">€ 60.000 per jaar · 1,5 dag per week · ~€ 770 per dag</span>
+        </div>
+        <div class="salaris-opt" data-vraag="1" data-keuze="C — € 60.000/campagne · ZZP" onclick="kiesOptie(this,1)">
+          <span class="salaris-nr">C</span><span class="salaris-tekst">€ 60.000 per campagne · ZZP · gewoon goede campagnes maken</span>
+        </div>
+        <div class="salaris-opt" data-vraag="1" data-keuze="D — Geld is geen probleem · geniale plannen" onclick="kiesOptie(this,1)">
+          <span class="salaris-nr">D</span><span class="salaris-tekst">Geld is geen probleem · kom met geniale plannen</span>
+        </div>
+      </div>
+      <button class="kluis-btn" id="v1verder" style="opacity:0.3;pointer-events:none" onclick="naarVraag(2)">Volgende vraag →</button>
+    </div>
+
+    <!-- VRAAG 2 -->
+    <div id="vraag2blok" style="display:none">
+      <div style="width:40px;height:1px;background:var(--gold);margin:0 auto 32px"></div>
+      <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">Vraag 2 van 3</div>
+      <div style="font-family:'Fraunces',serif;font-size:clamp(20px,5vw,30px);font-weight:700;line-height:1.2;color:var(--paper);margin-bottom:28px">
+        Welke lead uit het netwerk<br>van de campagnemarketeer<br>zou je willen benaderen?
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+        <div class="salaris-opt" data-vraag="2" data-keuze="a — school van zijn kinderen" onclick="kiesOptie(this,2)">
+          <span class="salaris-nr">a</span><span class="salaris-tekst">De school van zijn kinderen</span>
+        </div>
+        <div class="salaris-opt" data-vraag="2" data-keuze="b — basisschool waar hij zelf op zat" onclick="kiesOptie(this,2)">
+          <span class="salaris-nr">b</span><span class="salaris-tekst">De basisschool waar hij vroeger zelf op zat</span>
+        </div>
+        <div class="salaris-opt" data-vraag="2" data-keuze="c — school waar zijn zwager directeur is" onclick="kiesOptie(this,2)">
+          <span class="salaris-nr">c</span><span class="salaris-tekst">De school waar zijn zwager directeur is</span>
+        </div>
+        <div class="salaris-opt" data-vraag="2" data-keuze="d — school van Margreet Bontenbal" onclick="kiesOptie(this,2)">
+          <span class="salaris-nr">d</span><span class="salaris-tekst">De school van Margreet Bontenbal, zus van Henri</span>
+        </div>
+        <div class="salaris-opt" data-vraag="2" data-keuze="e — school waar vriend zijn vrouw directeur is" onclick="kiesOptie(this,2)">
+          <span class="salaris-nr">e</span><span class="salaris-tekst">De school waar de vrouw van een vriend directeur is</span>
+        </div>
+        <div class="salaris-opt" data-vraag="2" data-keuze="f — de juf van de kangoeroeklas" onclick="kiesOptie(this,2)">
+          <span class="salaris-nr">f</span><span class="salaris-tekst">De juf van de Kangoeroeklas — kids die van uitdagingen houden</span>
+        </div>
+        <div class="salaris-opt" data-vraag="2" data-keuze="g — gewoon allemaal" onclick="kiesOptie(this,2)">
+          <span class="salaris-nr">g</span><span class="salaris-tekst">Gewoon allemaal — mag dat ook?</span>
+        </div>
+      </div>
+      <button class="kluis-btn" id="v2verder" style="opacity:0.3;pointer-events:none" onclick="naarVraag(3)">Volgende vraag →</button>
+    </div>
+
+    <!-- VRAAG 3 -->
+    <div id="vraag3blok" style="display:none">
+      <div style="width:40px;height:1px;background:var(--gold);margin:0 auto 32px"></div>
+      <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">Vraag 3 van 3</div>
+      <div id="v3intro" style="font-family:'Fraunces',serif;font-size:16px;font-style:italic;color:var(--muted);margin-bottom:20px;line-height:1.6;padding:14px 18px;border-left:2px solid rgba(200,151,58,0.3)"></div>
+      <div style="font-family:'Fraunces',serif;font-size:clamp(20px,5vw,30px);font-weight:700;line-height:1.2;color:var(--paper);margin-bottom:28px">
+        Wat bieden we<br>de scholen?
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+        <div class="salaris-opt" data-vraag="3" data-keuze="a — rondleiding + Ontwerp je eigen klas sessie" onclick="kiesOptie(this,3)">
+          <span class="salaris-nr">a</span><span class="salaris-tekst">Rondleiding bij Heutink + 'Ontwerp je eigen klas'-sessie met Scrummers en AI-ers</span>
+        </div>
+        <div class="salaris-opt" data-vraag="3" data-keuze="b — game in de klas" onclick="kiesOptie(this,3)">
+          <span class="salaris-nr">b</span><span class="salaris-tekst">Een game in de klas spelen</span>
+        </div>
+        <div class="salaris-opt" data-vraag="3" data-keuze="c — kans op producten uit assortiment" onclick="kiesOptie(this,3)">
+          <span class="salaris-nr">c</span><span class="salaris-tekst">Kans maken op producten uit het Heutink-assortiment</span>
+        </div>
+        <div class="salaris-opt" data-vraag="3" data-keuze="d — herinrichting klaslokaal winnen" onclick="kiesOptie(this,3)">
+          <span class="salaris-nr">d</span><span class="salaris-tekst">Herinrichting van één klaslokaal winnen</span>
+        </div>
+      </div>
+      <button class="kluis-btn" id="v3verder" style="opacity:0.3;pointer-events:none" onclick="naarPalantir()">Volgende →</button>
+    </div>
+
+  </div>
+
+  <!-- PALANTIR -->
+  <div class="reveal" id="palantirblok" style="margin-top:0">
+    <div style="width:40px;height:1px;background:var(--gold);margin:0 auto 32px"></div>
+    <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">Laatste stap</div>
+    <div style="font-family:'Fraunces',serif;font-size:clamp(20px,5vw,30px);font-weight:700;line-height:1.2;color:var(--paper);margin-bottom:24px">
+      Bijna.<br><em style="color:var(--gold)">Eén woord.</em>
+    </div>
+    <p style="font-size:13px;line-height:1.9;color:var(--muted);margin-bottom:12px">
+      Heb je bij de start een bedrag gedoneerd aan de Foundation —<br>of heb je doorgeklikt zonder iets over te maken?
+    </p>
+    <p style="font-size:13px;line-height:1.9;color:var(--muted);margin-bottom:32px">
+      De campagne marketeer heeft een donatie gedaan.<br>
+      Check de betaling bij de financiële afdeling.<br>
+      In de omschrijving vind je één woord.<br>
+      Dat is de laatste code om de kluis te openen.
+    </p>
+    <p style="font-size:12px;line-height:1.7;color:rgba(200,151,58,0.6);margin-bottom:32px;font-style:italic">
+      Je bent er bijna. Tot aan de andere kant.
+    </p>
+    <div style="display:flex;gap:10px;margin-bottom:12px">
+      <input
+        id="palantirInput"
+        type="text"
+        placeholder="Voer het woord in..."
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="none"
+        spellcheck="false"
+        style="flex:1;background:rgba(245,240,232,0.05);border:1px solid rgba(200,151,58,0.2);border-radius:3px;padding:13px 16px;font-family:'DM Mono',monospace;font-size:14px;color:var(--paper);outline:none;letter-spacing:0.08em;transition:border-color 0.2s"
+        onkeydown="if(event.key==='Enter')checkPalantir()"
+      >
+      <button class="kluis-btn" style="white-space:nowrap;padding:13px 20px;background:var(--gold);color:var(--ink);border:none;cursor:pointer" onclick="checkPalantir()">Invoeren</button>
+    </div>
+    <div id="palantirError" style="font-size:11px;color:var(--red);min-height:16px;margin-bottom:24px;letter-spacing:0.04em"></div>
+    <a id="kluisKnop" class="kluis-btn" style="opacity:0;pointer-events:none;display:inline-block;transition:opacity 0.4s ease">
+      Open de kluis →
+    </a>
+  </div>
+
+</div>
+
+<script>
+  // De vier fragmenten in willekeurige volgorde tonen
+  const FRAGMENTEN = ['de', 'route', 'van', 'is', 'omweg', 'vaste', 'De', 'Arjan'];
+  const JUISTE_VOLGORDE = ['De', 'omweg', 'is', 'de', 'vaste', 'route', 'van', 'Arjan'];
+
+  // Schud de volgorde
+  function schud(arr) {
+    const a = [...arr];
+    // Zorg dat de volgorde altijd anders is dan juist
+    do {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+    } while (a.join('|') === JUISTE_VOLGORDE.join('|'));
+    return a;
+  }
+
+  let geschud = schud(FRAGMENTEN);
+  let bronVolgorde = [...geschud];
+  let doelVolgorde = [];
+  let dragItem = null;
+  let ghostEl = null;
+  let dragFrom = null; // 'bron' of 'doel'
+  let dragIndex = null;
+
+  function init() {
+    renderBron();
+    renderDoel();
+  }
+
+  function renderBron() {
+    const zone = document.getElementById('bronZone');
+    zone.innerHTML = '';
+    bronVolgorde.forEach((frag, i) => {
+      zone.appendChild(maakTile(frag, 'bron', i));
+    });
+    if (bronVolgorde.length === 0) {
+      zone.innerHTML = '<span style="font-size:11px;color:rgba(245,240,232,0.15);align-self:center;width:100%;text-align:center">Alle fragmenten geplaatst</span>';
+    }
+  }
+
+  function renderDoel() {
+    const zone = document.getElementById('doelZone');
+    const placeholder = document.getElementById('doelPlaceholder');
+    zone.innerHTML = '';
+    if (doelVolgorde.length === 0) {
+      zone.appendChild(Object.assign(document.createElement('div'), {
+        className: 'answer-placeholder',
+        id: 'doelPlaceholder',
+        textContent: 'Sleep de fragmenten hiernaartoe →'
+      }));
+    } else {
+      doelVolgorde.forEach((frag, i) => {
+        zone.appendChild(maakTile(frag, 'doel', i));
+      });
+    }
+    zone.classList.remove('correct', 'wrong');
+    document.getElementById('feedbackMsg').textContent = '';
+  }
+
+  function maakTile(tekst, van, index) {
+    const tile = document.createElement('div');
+    tile.className = 'fragment-tile';
+    tile.textContent = tekst;
+    tile.dataset.tekst = tekst;
+    tile.dataset.van = van;
+    tile.dataset.index = index;
+
+    // Desktop drag
+    tile.draggable = true;
+    tile.addEventListener('dragstart', onDragStart);
+    tile.addEventListener('dragend', onDragEnd);
+
+    // Touch
+    tile.addEventListener('touchstart', onTouchStart, { passive: false });
+
+    return tile;
+  }
+
+  // ── DESKTOP DRAG ──
+  function onDragStart(e) {
+    dragItem = e.currentTarget;
+    dragFrom = dragItem.dataset.van;
+    dragIndex = parseInt(dragItem.dataset.index);
+    setTimeout(() => dragItem.classList.add('dragging'), 0);
+    e.dataTransfer.effectAllowed = 'move';
+  }
+
+  function onDragEnd(e) {
+    if (dragItem) dragItem.classList.remove('dragging');
+    dragItem = null;
+  }
+
+  // Drop zones
+  ['bronZone', 'doelZone'].forEach(id => {
+    const zone = document.getElementById(id);
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      const naar = id === 'bronZone' ? 'bron' : 'doel';
+      verplaats(dragFrom, dragIndex, naar);
+    });
+  });
+
+  function verplaats(van, index, naar) {
+    if (van === naar) return;
+    let tekst;
+    if (van === 'bron') {
+      tekst = bronVolgorde.splice(index, 1)[0];
+      doelVolgorde.push(tekst);
+    } else {
+      tekst = doelVolgorde.splice(index, 1)[0];
+      bronVolgorde.push(tekst);
+    }
+    renderBron();
+    renderDoel();
+  }
+
+  // ── TOUCH DRAG ──
+  let touchOffsetX, touchOffsetY;
+
+  function onTouchStart(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const tile = e.currentTarget;
+    dragFrom = tile.dataset.van;
+    dragIndex = parseInt(tile.dataset.index);
+
+    const rect = tile.getBoundingClientRect();
+    touchOffsetX = touch.clientX - rect.left;
+    touchOffsetY = touch.clientY - rect.top;
+
+    // Maak ghost
+    ghostEl = tile.cloneNode(true);
+    ghostEl.className = 'fragment-tile ghost';
+    ghostEl.style.width = rect.width + 'px';
+    ghostEl.style.left = (touch.clientX - touchOffsetX) + 'px';
+    ghostEl.style.top = (touch.clientY - touchOffsetY) + 'px';
+    document.body.appendChild(ghostEl);
+
+    tile.classList.add('dragging');
+
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
+    document.addEventListener('touchend', onTouchEnd);
+  }
+
+  function onTouchMove(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    if (ghostEl) {
+      ghostEl.style.left = (touch.clientX - touchOffsetX) + 'px';
+      ghostEl.style.top = (touch.clientY - touchOffsetY) + 'px';
+    }
+  }
+
+  function onTouchEnd(e) {
+    document.removeEventListener('touchmove', onTouchMove);
+    document.removeEventListener('touchend', onTouchEnd);
+
+    const touch = e.changedTouches[0];
+    if (ghostEl) { ghostEl.remove(); ghostEl = null; }
+
+    // Verwijder dragging class
+    document.querySelectorAll('.fragment-tile.dragging').forEach(t => t.classList.remove('dragging'));
+
+    // Bepaal drop target
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const doelZone = document.getElementById('doelZone');
+    const bronZone = document.getElementById('bronZone');
+
+    let naar = null;
+    if (doelZone.contains(el) || el === doelZone) naar = 'doel';
+    if (bronZone.contains(el) || el === bronZone) naar = 'bron';
+
+    if (naar && naar !== dragFrom) {
+      verplaats(dragFrom, dragIndex, naar);
+    }
+  }
+
+  // ── CONTROLEER ──
+  function checkVolgorde() {
+    const doelZone = document.getElementById('doelZone');
+    const feedback = document.getElementById('feedbackMsg');
+
+    if (doelVolgorde.length < JUISTE_VOLGORDE.length) {
+      feedback.textContent = 'Plaats eerst alle vier de fragmenten.';
+      return;
+    }
+
+    if (doelVolgorde.join('|') === JUISTE_VOLGORDE.join('|')) {
+      doelZone.classList.add('correct', 'pop-correct');
+      feedback.textContent = '';
+      setTimeout(() => {
+        document.getElementById('reveal').classList.add('visible');
+        setTimeout(() => {
+          document.getElementById('vragenblok').classList.add('visible');
+          document.getElementById('vragenblok').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 800);
+      }, 600);
+    } else {
+      doelZone.classList.add('wrong');
+      feedback.textContent = 'Niet helemaal. Probeer een andere volgorde.';
+      setTimeout(() => doelZone.classList.remove('wrong'), 500);
+    }
+  }
+
+  function reset() {
+    geschud = schud(FRAGMENTEN);
+    bronVolgorde = [...geschud];
+    doelVolgorde = [];
+    document.getElementById('reveal').classList.remove('visible');
+    renderBron();
+    renderDoel();
+    document.getElementById('feedbackMsg').textContent = '';
+  }
+
+
+
+
+  const antwoorden = {};
+
+  function kiesOptie(el, vraag) {
+    document.querySelectorAll(`[data-vraag="${vraag}"]`).forEach(o => o.classList.remove('gekozen'));
+    el.classList.add('gekozen');
+    antwoorden[vraag] = el.dataset.keuze;
+
+    if (vraag < 3) {
+      const btn = document.getElementById('v' + vraag + 'verder');
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    } else {
+      const btn = document.getElementById('v3verder');
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    }
+  }
+
+  function naarVraag(nr) {
+    document.getElementById('vraag' + (nr-1) + 'blok').style.display = 'none';
+    const volgend = document.getElementById('vraag' + nr + 'blok');
+
+    // Wisselend tekstje boven vraag 3 op basis van lead-keuze
+    if (nr === 3) {
+      const keuze = antwoorden[2] || '';
+      const isG = keuze.startsWith('g');
+      const intro = document.getElementById('v3intro');
+      if (isG) {
+        intro.textContent = 'By far de beste keus! Waar ga je de scholen blij mee maken?';
+        intro.style.color = 'var(--gold)';
+      } else {
+        intro.textContent = 'Prima keuze, maar bescheiden. Wat zou je de school willen bieden?';
+        intro.style.color = 'var(--muted)';
+      }
+    }
+
+    volgend.style.display = 'block';
+    volgend.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+
+  function naarPalantir() {
+    document.getElementById('vraag3blok').style.display = 'none';
+    const blok = document.getElementById('palantirblok');
+    blok.classList.add('visible');
+    setTimeout(() => blok.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+  }
+
+  function checkPalantir() {
+    const inp = document.getElementById('palantirInput');
+    const err = document.getElementById('palantirError');
+    const val = inp.value.trim().toLowerCase();
+
+    if (!val) return;
+
+    if (val === 'palantir') {
+      err.textContent = '';
+      inp.style.borderColor = 'var(--green)';
+      const knop = document.getElementById('kluisKnop');
+      const params = encodeURIComponent(
+        'V1:' + (antwoorden[1]||'') + ' | V2:' + (antwoorden[2]||'') + ' | V3:' + (antwoorden[3]||'')
+      );
+      knop._params = params;
+      knop.href = '#';
+      knop.onclick = async function(e) {
+        e.preventDefault();
+        try {
+          await fetch('https://formspree.io/f/xaqpnnop', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              antwoorden: decodeURIComponent(knop._params),
+              bron: 'omwissel.html'
+            })
+          });
+        } catch(e) {}
+        window.location.href = 'CampagnevoorHeutink.html?antwoorden=' + knop._params;
+      };
+      knop.style.opacity = '1';
+      knop.style.pointerEvents = 'auto';
+      setTimeout(() => knop.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+    } else {
+      inp.style.borderColor = 'var(--red)';
+      inp.style.animation = 'shake 0.4s ease';
+      setTimeout(() => { inp.style.animation = ''; inp.style.borderColor = ''; }, 500);
+      err.textContent = 'Niet het juiste woord. Check de omschrijving van de betaling.';
+    }
+  }
+
+  // Start
+  init();
+</script>
+</body>
+</html>
